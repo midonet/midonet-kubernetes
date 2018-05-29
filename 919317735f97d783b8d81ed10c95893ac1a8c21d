@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5550b728_dbef86c7",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-29T12:20:11Z",
+      "side": 1,
+      "message": "This is a variable needed to initialize correctly the container (it\u0027s a workaround we could improve). It indicates the number of nodes expected to join. Here it expect 3 (master,slave0,slave1). For single node tests use \"1\" as value.",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 31
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
