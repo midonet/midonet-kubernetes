@@ -16,8 +16,8 @@
 package converter
 
 import (
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 // backend resources converted from k8s resources

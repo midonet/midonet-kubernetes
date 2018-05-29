@@ -21,10 +21,10 @@ package v1
 import (
 	time "time"
 
-	midonet_v1 "github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
-	versioned "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
-	internalinterfaces "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
-	v1 "github.com/yamt/midonet-kubernetes/pkg/client/listers/midonet/v1"
+	midonet_v1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	versioned "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	internalinterfaces "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
+	v1 "github.com/midonet/midonet-kubernetes/pkg/client/listers/midonet/v1"
 	meta_v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	watch "k8s.io/apimachinery/pkg/watch"

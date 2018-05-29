@@ -19,9 +19,9 @@ limitations under the License.
 package fake
 
 import (
-	clientset "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
-	midonetv1 "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1"
-	fakemidonetv1 "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1/fake"
+	clientset "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	midonetv1 "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1"
+	fakemidonetv1 "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1/fake"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/discovery"

@@ -20,7 +20,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	midonet "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
+	midonet "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 )
 
 // GetClients builds and returns Kubernetes client.

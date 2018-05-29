@@ -20,11 +20,11 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
-	mncli "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
-	"github.com/yamt/midonet-kubernetes/pkg/converter"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
-	"github.com/yamt/midonet-kubernetes/pkg/util"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/util"
 )
 
 type Handler struct {

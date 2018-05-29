@@ -1,4 +1,4 @@
-ARG BUILD_WORKDIR=/go/src/github.com/yamt/midonet-kubernetes
+ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
 ARG BINARY=midonet-kube-controllers
 ARG PACKAGE=./cmd/${BINARY}
 

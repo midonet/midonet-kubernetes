@@ -19,8 +19,8 @@ limitations under the License.
 package midonet
 
 import (
-	internalinterfaces "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
-	v1 "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions/midonet/v1"
+	internalinterfaces "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
+	v1 "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions/midonet/v1"
 )
 
 // Interface provides access to each of this group's versions.

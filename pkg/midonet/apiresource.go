@@ -22,7 +22,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 )
 
 type APIResource interface {

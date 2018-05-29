@@ -24,10 +24,10 @@ import (
 	"github.com/projectcalico/libcalico-go/lib/logutils"
 	log "github.com/sirupsen/logrus"
 
-	k8scni "github.com/yamt/midonet-kubernetes/pkg/cni/k8s"
-	"github.com/yamt/midonet-kubernetes/pkg/cni/utils"
-	"github.com/yamt/midonet-kubernetes/pkg/converter/node"
-	"github.com/yamt/midonet-kubernetes/pkg/k8s"
+	k8scni "github.com/midonet/midonet-kubernetes/pkg/cni/k8s"
+	"github.com/midonet/midonet-kubernetes/pkg/cni/utils"
+	"github.com/midonet/midonet-kubernetes/pkg/converter/node"
+	"github.com/midonet/midonet-kubernetes/pkg/k8s"
 )
 
 // NOTE(yamamoto): This init function was taken from calico CNI plugin

@@ -20,7 +20,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 // SubResource is a pseudo resource to represent a part of a k8s resource.

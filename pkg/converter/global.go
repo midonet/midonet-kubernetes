@@ -18,7 +18,7 @@ package converter
 import (
 	"github.com/google/uuid"
 
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 func ServicesChainID(config *midonet.Config) uuid.UUID {

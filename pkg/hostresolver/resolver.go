@@ -22,8 +22,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/yamt/midonet-kubernetes/pkg/converter"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 type Handler struct {

@@ -22,8 +22,8 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/cache"
 
-	"github.com/yamt/midonet-kubernetes/pkg/converter"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 type endpointsConverter struct {

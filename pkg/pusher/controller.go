@@ -19,11 +19,11 @@ import (
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
-	mncli "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
-	mninformers "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions"
-	"github.com/yamt/midonet-kubernetes/pkg/controller"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	mninformers "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions"
+	"github.com/midonet/midonet-kubernetes/pkg/controller"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, config *midonet.Config) *controller.Controller {

@@ -21,7 +21,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/yamt/midonet-kubernetes/pkg/config"
+	"github.com/midonet/midonet-kubernetes/pkg/config"
 )
 
 // REVISIT: maybe separate to ClientConfig and ConverterConfig

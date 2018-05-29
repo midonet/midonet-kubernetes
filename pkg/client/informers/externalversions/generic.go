@@ -21,7 +21,7 @@ package externalversions
 import (
 	"fmt"
 
-	v1 "github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
+	v1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"
 	cache "k8s.io/client-go/tools/cache"
 )

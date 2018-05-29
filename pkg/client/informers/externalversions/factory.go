@@ -23,9 +23,9 @@ import (
 	sync "sync"
 	time "time"
 
-	versioned "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
-	internalinterfaces "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
-	midonet "github.com/yamt/midonet-kubernetes/pkg/client/informers/externalversions/midonet"
+	versioned "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	internalinterfaces "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions/internalinterfaces"
+	midonet "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions/midonet"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

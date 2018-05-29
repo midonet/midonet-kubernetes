@@ -19,7 +19,7 @@ limitations under the License.
 package fake
 
 import (
-	midonetv1 "github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
+	midonetv1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 	schema "k8s.io/apimachinery/pkg/runtime/schema"

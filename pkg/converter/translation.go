@@ -31,8 +31,8 @@ import (
 	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/types"
 
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet/v1"
-	mncli "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 )
 
 type TranslationUpdater struct {

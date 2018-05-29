@@ -19,7 +19,7 @@ limitations under the License.
 package versioned
 
 import (
-	midonetv1 "github.com/yamt/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1"
+	midonetv1 "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned/typed/midonet/v1"
 	discovery "k8s.io/client-go/discovery"
 	rest "k8s.io/client-go/rest"
 	flowcontrol "k8s.io/client-go/util/flowcontrol"

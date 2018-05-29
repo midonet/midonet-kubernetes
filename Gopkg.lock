@@ -217,6 +217,39 @@
   revision = "be1fbeda19366dea804f00efff2dd73a1642fdcc"
 
 [[projects]]
+  name = "github.com/midonet/midonet-kubernetes"
+  packages = [
+    "pkg/apis/midonet",
+    "pkg/apis/midonet/v1",
+    "pkg/client/clientset/versioned",
+    "pkg/client/clientset/versioned/scheme",
+    "pkg/client/clientset/versioned/typed/midonet/v1",
+    "pkg/client/clientset/versioned/typed/midonet/v1/fake",
+    "pkg/client/informers/externalversions",
+    "pkg/client/informers/externalversions/internalinterfaces",
+    "pkg/client/informers/externalversions/midonet",
+    "pkg/client/informers/externalversions/midonet/v1",
+    "pkg/client/listers/midonet/v1",
+    "pkg/cni/k8s",
+    "pkg/cni/types",
+    "pkg/cni/utils",
+    "pkg/config",
+    "pkg/controller",
+    "pkg/converter",
+    "pkg/converter/endpoints",
+    "pkg/converter/node",
+    "pkg/converter/pod",
+    "pkg/converter/service",
+    "pkg/hostresolver",
+    "pkg/k8s",
+    "pkg/midonet",
+    "pkg/pusher",
+    "pkg/util"
+  ]
+  revision = "3747115a8a58ba4a34ed6f1fbe44a8cc66934bec"
+  version = "1.0"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -493,6 +526,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "11b3bc5f613c222db015c00ad01a82ddcafed5bfe22c787570aedaa616af4dee"
+  inputs-digest = "7f63229c61a4d6059b1888ef731c1152b021e70ea1fc1698f9e39a0175186256"
   solver-name = "gps-cdcl"
   solver-version = 1

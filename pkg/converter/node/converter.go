@@ -23,8 +23,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"k8s.io/api/core/v1"
 
-	"github.com/yamt/midonet-kubernetes/pkg/converter"
-	"github.com/yamt/midonet-kubernetes/pkg/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 func IDForKey(key string) uuid.UUID {

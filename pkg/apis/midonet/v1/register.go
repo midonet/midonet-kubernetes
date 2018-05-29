@@ -5,7 +5,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 
-	"github.com/yamt/midonet-kubernetes/pkg/apis/midonet"
+	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet"
 )
 
 var SchemeGroupVersion = schema.GroupVersion{
