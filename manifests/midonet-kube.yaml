@@ -1,4 +1,285 @@
 ---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: midonet-kube-config
+  namespace: kube-system
+data:
+  # Edit the following to match with your deployment.
+  # kubernetes.endpoint.* should match with "kubectl get ep kubernetes".
+  cluster.cidr: 10.1.0.0/16
+  service.cidr: 10.96.0.0/12
+  kubernetes.endpoint.host: 192.168.30.218
+  kubernetes.endpoint.port: "6443"
+  kubernetes.endpoint.subnet: 192.168.30.218/32
+  zookeeper.endpoint: 192.168.30.218:2181
+  midonet.api: http://192.168.30.218:8181/midonet-api
+  midonet.tunnelzone: df9feb01-8ed8-4fd4-825e-f2e039fc4bf3
+  midonet.router: 73302be0-4405-4cc6-a276-60b4cee1f5b9
+  midonet.node_cardinality: "3"
+  # midonet.loglevel: change to 'debug' if desired
+  midonet.controller.log.level: "info"
+  00-midonet.conf: |
+    {
+      "name": "midonet-pod-network",
+      "type": "midonet-kube-cni",
+      "ipam": {
+        "type": "host-local"
+      },
+      "kubernetes": {
+        "podcidr": "CLUSTER_CIDR"
+      }
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: midonet-kube-credential
+  namespace: kube-system
+type: Opaque
+data:
+  # Base64 encoded MidoNet API credential.
+  # e.g.
+  #   % echo -n 'mypassword' | openssl base64
+  #   bXlwYXNzd29yZA==
+  #   %
+  midonet.username: bXluYW1l
+  midonet.password: bXlwYXNzd29yZA==
+  midonet.project: bXlwcm9qZWN0
+---
+#
+# Zookeeper
+#
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: zookeeper
+  name: zookeeper
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: zookeeper
+    spec:
+      hostNetwork: true
+      containers:
+      - image: midonet/zookeeper:3.4.5
+        imagePullPolicy: IfNotPresent
+        name: zookeeper
+        resources: {}
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+      - effect: NoSchedule
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+      - effect: NoExecute
+        key: node.kubernetes.io/not-ready
+        operator: Exists
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: midonet
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - nodes/status
+    verbs:
+      - patch
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: midonet
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: midonet
+subjects:
+- kind: ServiceAccount
+  name: midonet
+  namespace: kube-system
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: midonet
+  namespace: kube-system
+---
+#
+# Midonet Cluster
+#
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: midonet-cluster
+  name: midonet-cluster
+  namespace: kube-system
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: midonet-cluster
+    spec:
+      hostNetwork: true
+      initContainers:
+      - name: init-midonet-cluster-wait-zookeeper
+        image: midonet/tools
+        env:
+        - name: ZK_ENDPOINTS
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: zookeeper.endpoint
+        command:
+        - sh
+        args:
+        - -c
+        - until echo ruok | nc $(echo ${ZK_ENDPOINTS} | sed 's/:/ /'); do echo waiting for zookeeper; sleep 2; done
+      containers:
+      - image: midonet/cluster:latest
+        imagePullPolicy: Always
+        env:
+        - name: ZK_ENDPOINTS
+          value: 127.0.0.1:2181
+        - name: AUTH_PROVIDER
+          value: Mock
+        - name: MIDONET_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: midonet.api
+        - name: CLUSTER_ROUTER_UUID
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: midonet.router
+        name: midonet-cluster
+        resources: {}
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+---
+#
+# Midonet Agent
+#
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: midonet-agent
+  namespace: kube-system
+  labels:
+    tier: node
+    app: midonet
+spec:
+  template:
+    metadata:
+      labels:
+        tier: node
+        app: midonet
+    spec:
+      hostNetwork: true
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      serviceAccountName: midonet
+      initContainers:
+        - name: init-midonet-agent-wait-zookeepeer
+          image: midonet/tools
+          command:
+          - sh
+          args:
+          - -c
+          - until echo ruok | nc $(echo ${ZK_ENDPOINTS} | sed 's/:/ /'); do echo waiting for zookeeper; sleep 2; done
+          env:
+          - name: ZK_ENDPOINTS
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: zookeeper.endpoint
+        - name: init-midonet-agent-wait-api
+          image: midonet/tools
+          command:
+          - sh
+          args:
+          - -c
+          - until curl ${MIDONET_API_URL}/routers/${MIDONET_ROUTER}; do echo waiting for midonet router; sleep 2; done
+          env:
+          - name: MIDONET_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.api
+          - name: MIDONET_ROUTER
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.router
+      containers:
+      - image: midonet/agent:latest
+        imagePullPolicy: Always
+        name: midonet-agent
+        env:
+        - name: ZK_ENDPOINTS
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: zookeeper.endpoint
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: MIDONET_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: midonet.api
+        - name: HOST_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: MIDONET_TUNNELZONE
+          valueFrom:
+            configMapKeyRef:
+              name: midonet-kube-config
+              key: midonet.tunnelzone
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: modules
+          mountPath: /lib/modules/
+      volumes:
+      - name: modules
+        hostPath:
+          path: /lib/modules
+---
 apiVersion: apiextensions.k8s.io/v1beta1
 description: MidoNet Translated Resources
 kind: CustomResourceDefinition
@@ -34,7 +315,47 @@ spec:
       serviceAccountName: midonet-kube-controllers
       hostNetwork: true
       tolerations:
-        - operator: Exists
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+      initContainers:
+        - name: init-midonet-agent-wait-api
+          image: midonet/cluster:latest
+          command: ["sh", "-c", "until curl ${MIDONET_API_URL}/routers/${MIDONET_ROUTER}; do echo waiting for midonet router; sleep 2; done;"]
+          env:
+          - name: MIDONET_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.api
+          - name: MIDONET_ROUTER
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.router
+        - name: init-midonet-agent-wait-midolman
+          image: midonet/tools
+          command:
+          - sh
+          args:
+          - -c
+          - while [ $(curl ${MIDONET_API_URL}/tunnel_zones/${MIDONET_TUNNELZONE}/hosts | grep -o hostId | wc -l) -lt ${MIDONET_NODE_CARDINALITY} ]; do echo waiting; sleep 2; done
+          env:
+          - name: MIDONET_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.api
+          - name: MIDONET_TUNNELZONE
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.tunnelzone
+          - name: MIDONET_NODE_CARDINALITY
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.node_cardinality
       containers:
         - name: midonet-kube-controllers
           image: midonet/midonet-kube-controllers:1.1
@@ -79,6 +400,11 @@ spec:
                 configMapKeyRef:
                   name: midonet-kube-config
                   key: kubernetes.endpoint.port
+            - name: MIDONETKUBE_LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: midonet-kube-config
+                  key: midonet.controller.log.level
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -151,9 +477,52 @@ spec:
         k8s-app: midonet-kube-node
     spec:
       hostNetwork: true
-      tolerations:
-        - operator: Exists
       serviceAccountName: midonet-kube-node
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+        operator: Exists
+      initContainers:
+        - name: init-midonet-cni-conf
+          image: midonet/tools
+          command:
+          - sh
+          args:
+          - -c
+          - cat /midonet-kube-config/00-midonet.conf | sed "s/CLUSTER_CIDR/$CLUSTER_CIDR/" > /host/etc/cni/net.d/00-midonet.conf
+          volumeMounts:
+          - mountPath: /host/etc/cni/net.d
+            name: cni-net-dir
+          - mountPath: /midonet-kube-config
+            name: midonet-kube-config
+        - name: init-midonet-agent-wait-midolman
+          image: midonet/tools
+          command:
+          - sh
+          args:
+          - -c
+          - export MIDONET_HOST_UUID=$(hostname | md5sum | awk '{print $1}' | sed 's/\(........\)\(....\)\(....\)\(....\)\(............\)/\1-\2-\3-\4-\5/'); echo Host UUID $MIDONET_HOST_UUID, tunnelzone ${MIDONET_TUNNELZONE}; until curl ${MIDONET_API_URL}/tunnel_zones/${MIDONET_TUNNELZONE}/hosts | grep ${MIDONET_HOST_UUID}; do echo waiting for midonet host; sleep 2; done
+          env:
+          - name: MIDONET_API_URL
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.api
+          - name: MIDONET_HOST # use it to generate the MIDONET_HOST_UUID deterministically
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.router
+          - name: MIDONET_TUNNELZONE
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: midonet.tunnelzone
+          - name: CLUSTER_CIDR
+            valueFrom:
+              configMapKeyRef:
+                name: midonet-kube-config
+                key: cluster.cidr
       containers:
         - name: midonet-kube-node
           image: midonet/midonet-kube-node:1.1
@@ -198,6 +567,9 @@ spec:
         - name: cni-net-dir
           hostPath:
             path: /etc/cni/net.d
+        - name: midonet-kube-config
+          configMap:
+            name: midonet-kube-config
 ---
 apiVersion: v1
 kind: ServiceAccount
