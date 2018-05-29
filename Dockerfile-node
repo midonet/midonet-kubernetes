@@ -1,4 +1,4 @@
-ARG BUILD_WORKDIR=/go/src/github.com/yamt/midonet-kubernetes
+ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
 
 FROM golang:1.10.1 as builder
 ARG BUILD_WORKDIR
