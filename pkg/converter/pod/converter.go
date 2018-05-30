@@ -49,6 +49,10 @@ func (c *podConverter) Convert(key string, obj interface{}, config *midonet.Conf
 		clog.Info("NodeName is not set")
 		return nil, nil, nil
 	}
+	if spec.HostNetwork {
+		clog.Debug("hostNetwork")
+		return nil, nil, nil
+	}
 	bridgeID := converter.IDForKey("Node", nodeName)
 	nodeObj, exists, err := c.nodeInformer.GetIndexer().GetByKey(nodeName)
 	if err != nil {
