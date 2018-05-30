@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "b1d16728_c8391b82",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "I think there is no difference, but it seems that 3.4.5 version is stated in the Midonet documentation and maybe that is the reason there was a specific image for Zookeeper. We could just use the generic/official one unless proven to cause problems.",
+      "parentUuid": "3430293c_6bef9b66",
+      "range": {
+        "startLine": 69,
+        "startChar": 15,
+        "endLine": 69,
+        "endChar": 38
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "106dbc89_d8672669",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -59,6 +83,30 @@
       "writtenOn": "2018-05-30T01:18:33Z",
       "side": 1,
       "message": "does this need to wait explicitly?\ni thought it was ok to boot these components in any order.",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 49
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ef3f0930_c6ce43e8",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "We think this way the containers run in proper order and give better feedback to the system administrator in the kubectl get/describe po commands. You can see that the container is in \u0027Init x/N\u0027 state (waiting for dependency x out of N dependencies) and not just failing by itself by any other reason.",
+      "parentUuid": "106dbc89_d8672669",
       "range": {
         "startLine": 149,
         "startChar": 0,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "4f3dd48b_0917ba7e",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "Same as before, just for better feedback to the sysadmin",
+      "parentUuid": "cefa35d5_066c4ae8",
+      "range": {
+        "startLine": 214,
+        "startChar": 0,
+        "endLine": 214,
+        "endChar": 50
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fd78e57b_f12347a2",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -105,6 +177,30 @@
       "writtenOn": "2018-05-30T01:18:33Z",
       "side": 1,
       "message": "does this need to wait explicitly?",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 43
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9c00625_f287e97a",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "Same as before. Also, in this case, we have it duplicated also in the agent container command, so maybe should be removed there (or here if we would want to discard initContainer approach). See https://github.com/midonet/midonet-docker/blob/09d4fb4f3e99d81cea6a5717cd5db536124426f2/agent/scripts/run-midolman.sh#L55 Also, strictly speaking it does not need to wait for the cluster router to exists, just the API, but this way the extra restriction makes it more ordered, despite it could make slower to init. Maybe until the plugin is stable enough this could be a good thing, and later we could remove. Also we could have two versions to better compare/debug.",
+      "parentUuid": "fd78e57b_f12347a2",
       "range": {
         "startLine": 227,
         "startChar": 0,
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "1e3880fa_2121a395",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "Same as before ones.",
+      "parentUuid": "29efcb87_762f54e3",
+      "range": {
+        "startLine": 322,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 43
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3d0cbd28_03a4285b",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -151,6 +271,30 @@
       "writtenOn": "2018-05-30T01:18:33Z",
       "side": 1,
       "message": "is this a workaround for https://github.com/yamt/midonet-kubernetes/issues/2 ?",
+      "range": {
+        "startLine": 342,
+        "startChar": 0,
+        "endLine": 342,
+        "endChar": 178
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "864a8dcd_762c00eb",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "Yes, it is useful also for better feedback but also in this case it could be needed due that issue. If it is fixed now, it would be optional (which is good as in this case the need to synchronize the MIDONET_NODE_CARDINALITY with actual number of nodes is horrible practice, and even with dynamic retrieval of the cardinality it could be not very elegant way)",
+      "parentUuid": "3d0cbd28_03a4285b",
       "range": {
         "startLine": 342,
         "startChar": 0,
@@ -186,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "bcca8fac_ebe4df09",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "No, but it seems it was needed because kubernetes refused to schedule the zookeeper container unless there where node at ready state and that is not achieved unless a proper CNI configuration in the node is available. So this was a way to set the CNI conf and allow node to be ready to deploy ZK, API, agent before fully running the midonet-kube-node, since there is a second init condition after this one. In case we don\u0027t need the \"ordered init containers\" this part could be removed. But it seems that if this container (midonet-kube-node) is not scheduled the first, the node won\u0027t be ready ever, avoiding scheduling zookeeper and blocking all the system. Obviously this not happen in non containerized Midonet but could be a problem here. We have tried to add tolerations to force Zookeeper to schedule in not ready nodes, but it seems to not work as expected. Maybe more research and test are needed.",
+      "parentUuid": "7353b82b_4cc6c0dc",
+      "range": {
+        "startLine": 486,
+        "startChar": 0,
+        "endLine": 486,
+        "endChar": 37
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "43d021e5_a037c8ba",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -209,6 +377,30 @@
     },
     {
       "key": {
+        "uuid": "4745b594_2939e3e5",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "This is to avoid the issue https://github.com/yamt/midonet-kubernetes/issues/2 too, as the mapping to the backed failed if the host was not in the tunnel zone. This initContainer assure that the local host is in the tunnel zone beforehand.",
+      "parentUuid": "43d021e5_a037c8ba",
+      "range": {
+        "startLine": 498,
+        "startChar": 0,
+        "endLine": 498,
+        "endChar": 48
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "11c72319_f34d9629",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -220,6 +412,30 @@
       "writtenOn": "2018-05-30T01:18:33Z",
       "side": 1,
       "message": "i suppose this belongs to initContainers of midonet-agent",
+      "range": {
+        "startLine": 504,
+        "startChar": 19,
+        "endLine": 504,
+        "endChar": 36
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c8f1fd20_7b1c8374",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-05-30T09:54:31Z",
+      "side": 1,
+      "message": "This is needed to get the deterministic Midonet host UUID and verify is added to the tunnel zone (see previous comment about issue #2)",
+      "parentUuid": "11c72319_f34d9629",
       "range": {
         "startLine": 504,
         "startChar": 19,
