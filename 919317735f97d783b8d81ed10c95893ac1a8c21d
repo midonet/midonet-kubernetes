@@ -22,6 +22,213 @@
       "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3430293c_6bef9b66",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "how is this different from, say, https://hub.docker.com/_/zookeeper/ ?",
+      "range": {
+        "startLine": 69,
+        "startChar": 15,
+        "endLine": 69,
+        "endChar": 38
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "106dbc89_d8672669",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "does this need to wait explicitly?\ni thought it was ok to boot these components in any order.",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 49
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cefa35d5_066c4ae8",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "does this need to wait explicitly?",
+      "range": {
+        "startLine": 214,
+        "startChar": 0,
+        "endLine": 214,
+        "endChar": 50
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd78e57b_f12347a2",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "does this need to wait explicitly?",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 43
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29efcb87_762f54e3",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "does this need to wait explicitly?\n\ni suppose it\u0027s fine to just leave it in CrashLoopBackOff state until the api gets ready.",
+      "range": {
+        "startLine": 322,
+        "startChar": 0,
+        "endLine": 322,
+        "endChar": 43
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d0cbd28_03a4285b",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 342,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "is this a workaround for https://github.com/yamt/midonet-kubernetes/issues/2 ?",
+      "range": {
+        "startLine": 342,
+        "startChar": 0,
+        "endLine": 342,
+        "endChar": 178
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7353b82b_4cc6c0dc",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "do you plan to replace the corresponding part of midonet-kube-node with this?",
+      "range": {
+        "startLine": 486,
+        "startChar": 0,
+        "endLine": 486,
+        "endChar": 37
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43d021e5_a037c8ba",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "right now, midonet-kube-node doesn\u0027t need to access midolman or midonet api",
+      "range": {
+        "startLine": 498,
+        "startChar": 0,
+        "endLine": 498,
+        "endChar": 48
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11c72319_f34d9629",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 504,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-30T01:18:33Z",
+      "side": 1,
+      "message": "i suppose this belongs to initContainers of midonet-agent",
+      "range": {
+        "startLine": 504,
+        "startChar": 19,
+        "endLine": 504,
+        "endChar": 36
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
