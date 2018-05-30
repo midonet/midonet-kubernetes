@@ -103,10 +103,12 @@ func (res *Bridge) Path(op string) string {
 type Port struct {
 	midonetResource
 	Parent
-	ID         *uuid.UUID     `json:"id,omitempty"`
-	Type       string         `json:"type"`
-	PortSubnet []*types.IPNet `json:"portSubnet,omitempty"`
-	PortMAC    HardwareAddr   `json:"portMac,omitempty"`
+	ID               *uuid.UUID     `json:"id,omitempty"`
+	Type             string         `json:"type"`
+	PortSubnet       []*types.IPNet `json:"portSubnet,omitempty"`
+	PortMAC          HardwareAddr   `json:"portMac,omitempty"`
+	InboundFilterID  *uuid.UUID     `json:"inboundFilterId,omitempty"`
+	OutboundFilterID *uuid.UUID     `json:"outboundFilterId,omitempty"`
 }
 
 func (_ *Port) MediaType() string {
