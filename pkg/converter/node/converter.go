@@ -16,6 +16,7 @@
 package node
 
 import (
+	"fmt"
 	"net"
 
 	"github.com/containernetworking/cni/pkg/types"
@@ -49,6 +50,8 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 	bridgeID := baseID
 	bridgePortID := converter.SubID(baseID, "Bridge Port")
 	nodePortID := PortIDForKey(key)
+	nodePortChainID := converter.SubID(baseID, "Node Port Chain")
+	nodeSNATRuleID := converter.SubID(baseID, "Node Port SNAT Rule")
 	routerPortID := converter.SubID(baseID, "Router Port")
 	subnetRouteID := converter.SubID(baseID, "Route")
 	apiRouteID := converter.SubID(baseID, "APIRoute")
@@ -62,6 +65,8 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 	routerPortSubnet := []*types.IPNet{
 		{si.GatewayIP.IP, si.GatewayIP.Mask},
 	}
+	gatewayIP := si.GatewayIP.IP.String()
+	nodeIP := si.NodeIP.IP.String()
 	apiSubnetAddr := config.KubernetesAPISubnet.IP
 	apiSubnetLen, _ := config.KubernetesAPISubnet.Mask.Size()
 	subnetAddr := si.Subnet.IP
@@ -115,10 +120,16 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 			// PortID: &bridgePortID,
 			PeerID: &routerPortID,
 		},
+		&midonet.Chain{
+			ID:       &nodePortChainID,
+			Name:     fmt.Sprintf("KUBE-NODE-%s", key),
+			TenantID: config.Tenant,
+		},
 		&midonet.Port{
-			Parent: midonet.Parent{ID: &bridgeID},
-			ID:     &nodePortID,
-			Type:   "Bridge",
+			Parent:           midonet.Parent{ID: &bridgeID},
+			ID:               &nodePortID,
+			Type:             "Bridge",
+			OutboundFilterID: &nodePortChainID,
 		},
 		&midonet.HostInterfacePort{
 			Parent:        midonet.Parent{ID: &hostID},
@@ -140,6 +151,31 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 			NextHopPort:      &routerPortID,
 			NextHopGateway:   si.NodeIP.IP,
 			Type:             "Normal",
+		},
+		// In the out-filter chain of the Node port, SNAT traffic from
+		// the Node IP.  (It's usually the traffic routed by the above
+		// route for apiserver.)  Otherwise, the return traffic will not
+		// come back to us and we can't REV_DNAT for the services.
+		// REVISIT: Depending on the way we implement the external
+		// connectivity, we may want to perform SNAT for other source IP
+		// addresses.
+		&midonet.Rule{
+			Parent:       midonet.Parent{ID: &nodePortChainID},
+			ID:           &nodeSNATRuleID,
+			Type:         "snat",
+			DLType:       0x800,
+			NWSrcAddress: nodeIP,
+			NWSrcLength:  32,
+			NATTargets: &[]midonet.NATTarget{
+				{
+					AddressFrom: gatewayIP,
+					AddressTo:   gatewayIP,
+					// REVISIT: arbitrary port range
+					PortFrom: 30000,
+					PortTo:   60000,
+				},
+			},
+			FlowAction: "continue",
 		},
 	}, nil, nil
 }
