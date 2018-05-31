@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "567f9bdd_82595623",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-31T03:41:02Z",
+      "side": 1,
+      "message": "but it doesn\u0027t work eg. when zk rebooted for some reasons after midonet-cluster has already booted, right?\nIMO, introducing more state makes the system more complex.\ni\u0027d suggest to remove extra serializations as far as possible.",
+      "parentUuid": "ef3f0930_c6ce43e8",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 49
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cefa35d5_066c4ae8",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
@@ -201,6 +225,30 @@
       "side": 1,
       "message": "Same as before. Also, in this case, we have it duplicated also in the agent container command, so maybe should be removed there (or here if we would want to discard initContainer approach). See https://github.com/midonet/midonet-docker/blob/09d4fb4f3e99d81cea6a5717cd5db536124426f2/agent/scripts/run-midolman.sh#L55 Also, strictly speaking it does not need to wait for the cluster router to exists, just the API, but this way the extra restriction makes it more ordered, despite it could make slower to init. Maybe until the plugin is stable enough this could be a good thing, and later we could remove. Also we could have two versions to better compare/debug.",
       "parentUuid": "fd78e57b_f12347a2",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 227,
+        "endChar": 43
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb097d46_67862d7d",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-31T03:41:02Z",
+      "side": 1,
+      "message": "IMO, it\u0027s better to shake bugs out rather than avoiding them, especially in the early dev stage.",
+      "parentUuid": "d9c00625_f287e97a",
       "range": {
         "startLine": 227,
         "startChar": 0,
@@ -342,6 +390,30 @@
       "side": 1,
       "message": "No, but it seems it was needed because kubernetes refused to schedule the zookeeper container unless there where node at ready state and that is not achieved unless a proper CNI configuration in the node is available. So this was a way to set the CNI conf and allow node to be ready to deploy ZK, API, agent before fully running the midonet-kube-node, since there is a second init condition after this one. In case we don\u0027t need the \"ordered init containers\" this part could be removed. But it seems that if this container (midonet-kube-node) is not scheduled the first, the node won\u0027t be ready ever, avoiding scheduling zookeeper and blocking all the system. Obviously this not happen in non containerized Midonet but could be a problem here. We have tried to add tolerations to force Zookeeper to schedule in not ready nodes, but it seems to not work as expected. Maybe more research and test are needed.",
       "parentUuid": "7353b82b_4cc6c0dc",
+      "range": {
+        "startLine": 486,
+        "startChar": 0,
+        "endLine": 486,
+        "endChar": 37
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "229d16bb_e3b3415e",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 486,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-31T03:41:02Z",
+      "side": 1,
+      "message": "daemonsets have a few implicit tolerations. have you checked them?\nhttps://github.com/kubernetes/kubernetes/blob/v1.10.0/pkg/controller/daemon/daemon_controller.go#L1183-L1226\ni guess it\u0027s simpler to use wildcard toleration as i mentioned above. all of our pods are \"critical\" for the cluster.",
+      "parentUuid": "bcca8fac_ebe4df09",
       "range": {
         "startLine": 486,
         "startChar": 0,

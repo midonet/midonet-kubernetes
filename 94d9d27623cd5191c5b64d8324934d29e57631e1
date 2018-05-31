@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "54c8b602_2811fe6a",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-05-31T03:41:02Z",
+      "side": 0,
+      "message": "i guess for critical things \"wildcard\" toleration like this is simpler.\nit\u0027s what kubeadm does for kube-proxy these days.",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 26
+      },
+      "revId": "94d9d27623cd5191c5b64d8324934d29e57631e1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
