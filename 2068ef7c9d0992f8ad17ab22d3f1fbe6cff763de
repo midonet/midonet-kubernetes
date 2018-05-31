@@ -1,0 +1,7 @@
+Code-Review+2: Miguel Herranz <miguel@midokura.com>
+Verified+1: YAMAMOTO Takashi <yamamoto@midokura.com>
+Submitted-by: YAMAMOTO Takashi <yamamoto@midokura.com>
+Submitted-at: Thu, 31 May 2018 06:17:27 +0000
+Reviewed-on: https://review.gerrithub.io/412876
+Project: midonet/midonet-kubernetes
+Branch: refs/heads/master
