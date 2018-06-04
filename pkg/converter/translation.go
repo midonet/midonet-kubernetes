@@ -53,15 +53,16 @@ func (u *TranslationUpdater) Update(key string, parentKind schema.GroupVersionKi
 		log.WithError(err).Error("Accessor")
 		return err
 	}
+	puid := pmeta.GetUID()
 	owners := []metav1.OwnerReference{
 		{
 			APIVersion: parentKind.GroupVersion().String(),
 			Kind:       parentKind.Kind,
 			Name:       pmeta.GetName(),
-			UID:        pmeta.GetUID(),
+			UID:        puid,
 		},
 	}
-	labels := map[string]string{OwnerUIDLabel: string(pmeta.GetUID())}
+	labels := map[string]string{OwnerUIDLabel: string(puid)}
 	finalizers := []string{MidoNetAPIDeleter}
 	for k, res := range resources {
 		uid, err := u.updateOne(k, prefix, owners, labels, finalizers, res)
@@ -71,11 +72,7 @@ func (u *TranslationUpdater) Update(key string, parentKind schema.GroupVersionKi
 		uids = append(uids, uid)
 	}
 	// Remove stale translations
-	meta, err := meta.Accessor(parentObj)
-	if err != nil {
-		return err
-	}
-	return u.deleteTranslations(meta.GetUID(), uids)
+	return u.deleteTranslations(puid, uids)
 }
 
 func (u *TranslationUpdater) deleteTranslations(parentUID types.UID, keepUIDs []types.UID) error {
