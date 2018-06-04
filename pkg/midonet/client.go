@@ -73,10 +73,16 @@ func (c *Client) Push(resources []APIResource) error {
 			return err
 		}
 		if resp.StatusCode == 404 {
-			if _, ok := res.(HasParent); ok {
-				log.Info("Parent doesn't exist yet?")
-				return fmt.Errorf("Parent doesn't exist yet?")
-			}
+			// There are a few cases we can see 404 here.
+			// - The resource is HasParent and the parent has not been
+			//   created yet
+			// - The resource has a reference to the other resources (e.g.
+			//   filter chains for a Bridge) and they have not been created
+			//   yet
+			log.WithFields(log.Fields{
+				"resource": res,
+			}).Info("Referent doesn't exist yet?")
+			return fmt.Errorf("Referent doesn't exist yet?")
 		}
 		if resp.StatusCode == 409 {
 			if res.Path("PUT") != "" {
