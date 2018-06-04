@@ -35,8 +35,7 @@ type SubResourceMap map[string]SubResource
 type Updater interface {
 	// NOTE: Pass GVK explicitly as List'ed objects don't have valid
 	// TypeMeta.  https://github.com/kubernetes/kubernetes/issues/3030
-	Update(key string, parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error
-	Delete(key string) error
+	Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error
 }
 
 type Handler struct {
@@ -89,7 +88,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 		clog.WithError(err).Error("Failed to convert sub resources")
 		return err
 	}
-	err = h.updater.Update(key, gvk, obj, converted)
+	err = h.updater.Update(gvk, obj, converted)
 	if err != nil {
 		clog.WithError(err).Error("Failed to update")
 		return err
@@ -98,11 +97,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 }
 
 func (h *Handler) Delete(key string) error {
-	clog := log.WithField("key", key)
-	err := h.updater.Delete(key)
-	if err != nil {
-		clog.WithError(err).Error("Failed to delete")
-		return err
-	}
+	log.WithField("key", key).Debug("Delete")
+	/* nothing to do */
 	return nil
 }

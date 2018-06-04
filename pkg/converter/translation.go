@@ -45,7 +45,7 @@ func NewTranslationUpdater(client mncli.Interface) *TranslationUpdater {
 	}
 }
 
-func (u *TranslationUpdater) Update(key string, parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error {
+func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error {
 	var uids []types.UID
 	prefix := strings.ToLower(parentKind.Kind)
 	pmeta, err := meta.Accessor(parentObj)
@@ -190,11 +190,6 @@ func (u *TranslationUpdater) updateOne(key string, prefix string, owners []metav
 		"name":      name,
 	}).Info("Updated Translation")
 	return newObj.ObjectMeta.UID, nil
-}
-
-func (u *TranslationUpdater) Delete(key string) error {
-	/* nothing to do */
-	return nil
 }
 
 func extractNames(key string) (string, string, error) {
