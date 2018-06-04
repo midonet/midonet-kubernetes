@@ -64,7 +64,7 @@ func main() {
 
 	midonetCfg := midonet.NewConfigFromEnvConfig(config)
 
-	err = converter.EnsureGlobalResources(midonetCfg)
+	err = converter.EnsureGlobalResources(mnClientset, midonetCfg)
 	if err != nil {
 		log.WithError(err).Fatal("EnsureGlobalResources")
 	}

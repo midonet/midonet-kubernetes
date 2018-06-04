@@ -20,4 +20,9 @@ const (
 	// It's somehow redundant with OwnerReference but you can't use
 	// arbitrary fields for field selectors.
 	OwnerUIDLabel = "midonet.org/owner-uid"
+
+	// We use this label to find Translations for global resources,
+	// that is, Translations which doesn't belong to a particular
+	// Kubernetes resource.  (See global.go)
+	GlobalLabel = "midonet.org/global"
 )
