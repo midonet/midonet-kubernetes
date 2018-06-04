@@ -18,7 +18,9 @@ package converter
 import (
 	"github.com/google/uuid"
 
+	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
 func ServicesChainID(config *midonet.Config) uuid.UUID {
@@ -30,7 +32,7 @@ func MainChainID(config *midonet.Config) uuid.UUID {
 	return IDForTenant(config.Tenant)
 }
 
-func GlobalResources(config *midonet.Config) []midonet.APIResource {
+func GlobalResources(config *midonet.Config) map[string]([]BackendResource) {
 	tenant := config.Tenant
 	baseID := IDForTenant(tenant)
 	mainChainID := baseID
@@ -40,44 +42,45 @@ func GlobalResources(config *midonet.Config) []midonet.APIResource {
 	jumpToServicesRuleID := SubID(baseID, "Jump To Services")
 	revSNATRuleID := SubID(baseID, "Reverse SNAT")
 	revDNATRuleID := SubID(baseID, "Reverse DNAT")
-	return []midonet.APIResource{
-		&midonet.Chain{
-			ID:       &mainChainID,
-			Name:     "KUBE-MAIN",
-			TenantID: tenant,
-		},
-		&midonet.Chain{
-			ID:       &preChainID,
-			Name:     "KUBE-PRE",
-			TenantID: tenant,
-		},
-		&midonet.Chain{
-			ID:       &servicesChainID,
-			Name:     "KUBE-SERVICES",
-			TenantID: tenant,
-		},
-		// REVISIT: Ensure the order of rules
-		midonet.JumpRule(&jumpToServicesRuleID, &mainChainID, &servicesChainID),
-		midonet.JumpRule(&jumpToPreRuleID, &mainChainID, &preChainID),
-		// Reverse NAT rules for Endpoints.
-		// REVISIT: Ensure the order of rules
-		&midonet.Rule{
-			Parent:     midonet.Parent{ID: &preChainID},
-			ID:         &revDNATRuleID,
-			Type:       "rev_dnat",
-			FlowAction: "accept",
-		},
-		&midonet.Rule{
-			Parent:     midonet.Parent{ID: &preChainID},
-			ID:         &revSNATRuleID,
-			Type:       "rev_snat",
-			FlowAction: "continue",
+	return map[string]([]BackendResource){
+		// Chains shared among Bridges for Nodes
+		"kube-system/chain": []BackendResource{
+			&midonet.Chain{
+				ID:       &mainChainID,
+				Name:     "KUBE-MAIN",
+				TenantID: tenant,
+			},
+			&midonet.Chain{
+				ID:       &preChainID,
+				Name:     "KUBE-PRE",
+				TenantID: tenant,
+			},
+			&midonet.Chain{
+				ID:       &servicesChainID,
+				Name:     "KUBE-SERVICES",
+				TenantID: tenant,
+			},
+			midonet.JumpRule(&jumpToServicesRuleID, &mainChainID, &servicesChainID),
+			midonet.JumpRule(&jumpToPreRuleID, &mainChainID, &preChainID),
+			// Reverse NAT rules for Endpoints.
+			&midonet.Rule{
+				Parent:     midonet.Parent{ID: &preChainID},
+				ID:         &revDNATRuleID,
+				Type:       "rev_dnat",
+				FlowAction: "accept",
+			},
+			&midonet.Rule{
+				Parent:     midonet.Parent{ID: &preChainID},
+				ID:         &revSNATRuleID,
+				Type:       "rev_snat",
+				FlowAction: "continue",
+			},
 		},
 	}
 }
 
-func EnsureGlobalResources(config *midonet.Config) error {
+func EnsureGlobalResources(mncli mncli.Interface, config *midonet.Config) error {
 	resources := GlobalResources(config)
-	cli := midonet.NewClient(config)
-	return cli.Push(resources)
+	updater := NewTranslationUpdater(mncli)
+	return updater.Update(schema.GroupVersionKind{}, nil, resources)
 }

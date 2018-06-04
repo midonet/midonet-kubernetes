@@ -5,6 +5,7 @@
 | Label                 | Resource    | Description                         |
 |:----------------------|:------------|:------------------------------------|
 | midonet.org/owner-uid | Translation | UID of the k8s resource to which this Translation belongs |
+| midonet.org/global    | Translation | Translations not owned by k8s resources |
 
 ## Annotations
 

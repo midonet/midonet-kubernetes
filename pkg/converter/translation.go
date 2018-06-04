@@ -46,36 +46,58 @@ func NewTranslationUpdater(client mncli.Interface) *TranslationUpdater {
 }
 
 func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error {
-	var uids []types.UID
-	prefix := strings.ToLower(parentKind.Kind)
-	pmeta, err := meta.Accessor(parentObj)
-	if err != nil {
-		log.WithError(err).Error("Accessor")
-		return err
+	var prefix string
+	var owners []metav1.OwnerReference
+	var ownerlabels map[string]string
+	var requirement *labels.Requirement
+	if parentObj != nil {
+		prefix = strings.ToLower(parentKind.Kind)
+		pmeta, err := meta.Accessor(parentObj)
+		if err != nil {
+			log.WithError(err).Error("Accessor")
+			return err
+		}
+		puid := pmeta.GetUID()
+		owners = []metav1.OwnerReference{
+			{
+				APIVersion: parentKind.GroupVersion().String(),
+				Kind:       parentKind.Kind,
+				Name:       pmeta.GetName(),
+				UID:        puid,
+			},
+		}
+		ownerlabels = map[string]string{OwnerUIDLabel: string(puid)}
+		r, err := labels.NewRequirement(OwnerUIDLabel, selection.Equals, []string{string(puid)})
+		if err != nil {
+			return err
+		}
+		requirement = r
+	} else {
+		// Note: this prefix should be unique enough so that it won't
+		// collide with possible future k8s resource types.
+		prefix = "midonet-global"
+		owners = nil
+		ownerlabels = map[string]string{GlobalLabel: ""}
+		r, err := labels.NewRequirement(GlobalLabel, selection.Exists, nil)
+		if err != nil {
+			return err
+		}
+		requirement = r
 	}
-	puid := pmeta.GetUID()
-	owners := []metav1.OwnerReference{
-		{
-			APIVersion: parentKind.GroupVersion().String(),
-			Kind:       parentKind.Kind,
-			Name:       pmeta.GetName(),
-			UID:        puid,
-		},
-	}
-	labels := map[string]string{OwnerUIDLabel: string(puid)}
 	finalizers := []string{MidoNetAPIDeleter}
+	var uids []types.UID
 	for k, res := range resources {
-		uid, err := u.updateOne(k, prefix, owners, labels, finalizers, res)
+		uid, err := u.updateOne(k, prefix, owners, ownerlabels, finalizers, res)
 		if err != nil {
 			return err
 		}
 		uids = append(uids, uid)
 	}
 	// Remove stale translations
-	return u.deleteTranslations(puid, uids)
+	return u.deleteTranslations(requirement, uids)
 }
 
-func (u *TranslationUpdater) deleteTranslations(parentUID types.UID, keepUIDs []types.UID) error {
+func (u *TranslationUpdater) deleteTranslations(req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
 	// but it might be tricky to avoid races with ourselves:
@@ -86,10 +108,6 @@ func (u *TranslationUpdater) deleteTranslations(parentUID types.UID, keepUIDs []
 	//   addtion from the first update yet. in that case, it might
 	//   fail to delete the Translation.
 	selector := labels.NewSelector()
-	req, err := labels.NewRequirement(OwnerUIDLabel, selection.Equals, []string{string(parentUID)})
-	if err != nil {
-		return err
-	}
 	selector = selector.Add(*req)
 	opts := metav1.ListOptions{LabelSelector: selector.String()}
 	objList, err := u.client.MidonetV1().Translations(metav1.NamespaceAll).List(opts)
