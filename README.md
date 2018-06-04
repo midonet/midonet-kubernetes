@@ -117,6 +117,31 @@ We use [GerritHub][gerrithub] to submit patches.
 
 We don't use GitHub pull requests.
 
+### Reviewing patches
+
+Everyone is enouraged to review [patches for this repository][patches to review].
+
+[patches to review]: https://review.gerrithub.io/#/q/project:midonet/midonet-kubernetes+status:open
+
+If you want to be notified of patches, you can add this repository to
+["Watched Projects"][watched projects] in your GerritHub settings.
+
+[watched projects]: https://review.gerrithub.io/#/settings/projects
+
+Right now, we don't have voting CIs.
+Everyone is encouraged to test patches manually and comment the results.
+If you have a permission, vote Verified +1.
+
+### Merging patches
+
+Unless it's urgent, a patch should be reviewed by at least one person
+other than the submitter of the patch before being merged.
+
+Right now, members of [GerritHub midonet group][midonet group] have the permission to merge patches.
+If you are interested in being a member, please reach out the existing members.
+
+[midonet group]: https://review.gerrithub.io/#/admin/groups/80,members
+
 ### Issue tracker
 
 Bugs and Tasks are tracked in [MidoNet jira][jira].
