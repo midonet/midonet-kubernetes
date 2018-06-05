@@ -150,3 +150,15 @@ We might consider alternatives if the traffic goes up.
 [jira]: https://midonet.atlassian.net/
 
 We don't use GitHub issues.
+
+## Release process
+
+Right now, our releases are tags on master branch.
+
+1. Create and push a git tag for the release.
+
+2. Build and push the docker images. (See the above sections about docker images)
+
+3. Submit a patch to update docker image tags in our kubernetes manifests.
+
+4. Review and merge the patch.
