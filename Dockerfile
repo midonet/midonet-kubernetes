@@ -11,7 +11,7 @@ WORKDIR ${BUILD_WORKDIR}
 COPY . .
 # RUN go get -v -u github.com/golang/dep/cmd/dep
 # RUN dep ensure -v
-RUN CGO_ENABLED=0 go build -v -o ${BINARY} ${PACKAGE}
+RUN CGO_ENABLED=0 go build -v -ldflags '-s -w' -o ${BINARY} ${PACKAGE}
 
 FROM scratch
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
