@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "3d3bf42d_1fd76690",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-06-06T06:48:21Z",
+      "side": 1,
+      "message": "this should be the cidr for the node, not the whole cluster.",
+      "range": {
+        "startLine": 30,
+        "startChar": 20,
+        "endLine": 30,
+        "endChar": 32
+      },
+      "revId": "919317735f97d783b8d81ed10c95893ac1a8c21d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3430293c_6bef9b66",
         "filename": "manifests/midonet-kube.yaml",
         "patchSetId": 1
