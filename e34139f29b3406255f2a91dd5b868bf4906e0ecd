@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42fd00a5_2f322177",
+        "filename": "Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-07T19:03:26Z",
+      "side": 1,
+      "message": "I would prefer long versions in the scripts (like --strip-all instead of -s). Also, I haven\u0027t found -w in my version of ld manual so I am not sure what it is for.",
+      "range": {
+        "startLine": 14,
+        "startChar": 40,
+        "endLine": 14,
+        "endChar": 45
+      },
+      "revId": "e34139f29b3406255f2a91dd5b868bf4906e0ecd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
