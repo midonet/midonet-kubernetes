@@ -16,8 +16,8 @@
 package midonet
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestGetZeroValue(t *testing.T) {

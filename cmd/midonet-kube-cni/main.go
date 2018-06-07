@@ -21,11 +21,11 @@ import (
 	"github.com/containernetworking/cni/pkg/skel"
 	cnitypes "github.com/containernetworking/cni/pkg/types"
 	cniSpecVersion "github.com/containernetworking/cni/pkg/version"
-	"github.com/projectcalico/libcalico-go/lib/logutils"
-	"github.com/sirupsen/logrus"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/k8s"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/utils"
+	"github.com/projectcalico/libcalico-go/lib/logutils"
+	"github.com/sirupsen/logrus"
 )
 
 func init() {
