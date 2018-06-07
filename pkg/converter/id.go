@@ -24,8 +24,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Space constants for Version 5 UUID.
 const (
-	kubernetesSpaceUUIDString    = "CAC60164-F74C-404A-AB39-3C1320124A17"
+	// kubernetesSpaceUUIDString is used to generate MidoNet UUID (eg. PortID)
+	// for Kubernetes resouces (Namespace/Name)
+	// REVISIT: Make this per tenant to allow a single MidoNet to back
+	// multiple Kubernetes deployments.
+	kubernetesSpaceUUIDString = "CAC60164-F74C-404A-AB39-3C1320124A17"
+
+	// midonetTenantSpaceUUIDString is used to generate MidoNet UUID
+	// (eg. PortID) for the MidoNet tenant.  It's used for global resources.
 	midonetTenantSpaceUUIDString = "3978567E-91C4-465C-A0D1-67575F6B4C7F"
 )
 
