@@ -39,9 +39,6 @@ type Config struct {
 
 	// MidoNet tenantId to group resources maintained by our controllers
 	Tenant string `default:"midonetkube"`
-
-	// Kubernetes subnet. This should include the apiserver.
-	KubernetesSubnet string `envconfig:"kubernetes_subnet" required:"true"`
 }
 
 // Parse parses envconfig and stores in Config struct
