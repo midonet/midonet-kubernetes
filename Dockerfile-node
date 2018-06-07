@@ -1,10 +1,20 @@
 ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
 
+FROM golang:1.10.1 as deps
+ARG BUILD_WORKDIR
+WORKDIR ${BUILD_WORKDIR}
+COPY Gopkg.toml .
+COPY Gopkg.lock .
+RUN go get -v -u github.com/golang/dep/cmd/dep
+RUN dep ensure -v -vendor-only
+
 FROM golang:1.10.1 as builder
 ARG BUILD_WORKDIR
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 WORKDIR ${BUILD_WORKDIR}
-COPY . .
+COPY pkg pkg
+COPY cmd cmd
+COPY --from=deps ${BUILD_WORKDIR}/vendor vendor
 RUN CGO_ENABLED=0 go build -v -o midonet-kube-node ./cmd/midonet-kube-node
 RUN CGO_ENABLED=0 go build -v -o midonet-kube-cni ./cmd/midonet-kube-cni
 
