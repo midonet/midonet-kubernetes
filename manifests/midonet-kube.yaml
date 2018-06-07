@@ -64,11 +64,6 @@ spec:
                 configMapKeyRef:
                   name: midonet-kube-config
                   key: midonet.router
-            - name: MIDONETKUBE_KUBERNETES_SUBNET
-              valueFrom:
-                configMapKeyRef:
-                  name: midonet-kube-config
-                  key: kubernetes.endpoint.subnet
             - name: KUBERNETES_SERVICE_HOST
               valueFrom:
                 configMapKeyRef:
