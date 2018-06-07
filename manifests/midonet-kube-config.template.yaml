@@ -12,8 +12,10 @@ data:
   kubernetes.endpoint.host: 10.0.0.9
   kubernetes.endpoint.port: "6443"
   kubernetes.endpoint.subnet: 10.0.0.9/32
+  zookeeper.endpoint: 10.0.0.9:2181
   midonet.api: http://10.0.0.9:8181/midonet-api
   midonet.router: 73302be0-4405-4cc6-a276-60b4cee1f5b9
+  midonet.tunnelzone: df9feb01-8ed8-4fd4-825e-f2e039fc4bf3
 ---
 apiVersion: v1
 kind: Secret
