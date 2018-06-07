@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9313b15a_5c1caa83",
+        "filename": "pkg/converter/handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-07T17:50:43Z",
+      "side": 1,
+      "message": "is this function used/needed anymore?",
+      "range": {
+        "startLine": 99,
+        "startChar": 18,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
