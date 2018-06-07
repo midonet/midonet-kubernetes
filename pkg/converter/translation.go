@@ -50,6 +50,8 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	var owners []metav1.OwnerReference
 	var ownerlabels map[string]string
 	var requirement *labels.Requirement
+	var ns string
+	hasNamespace := true
 	if parentObj != nil {
 		prefix = strings.ToLower(parentKind.Kind)
 		pmeta, err := meta.Accessor(parentObj)
@@ -72,6 +74,13 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 			return err
 		}
 		requirement = r
+		ns = pmeta.GetNamespace()
+		if ns == "" {
+			// Namespace-less resource like Node.  Use the default
+			// namespace for the corresponding Translation resources.
+			hasNamespace = false
+			ns = metav1.NamespaceDefault
+		}
 	} else {
 		// Note: this prefix should be unique enough so that it won't
 		// collide with possible future k8s resource types.
@@ -83,11 +92,19 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 			return err
 		}
 		requirement = r
+		ns = metav1.NamespaceSystem
 	}
 	finalizers := []string{MidoNetAPIDeleter}
 	var uids []types.UID
 	for k, res := range resources {
-		uid, err := u.updateOne(k, prefix, owners, ownerlabels, finalizers, res)
+		// TODO: Stop extracting name from key
+		name, err := extractName(k, hasNamespace)
+		if err != nil {
+			return err
+		}
+		name = fmt.Sprintf("%s.%s", prefix, name)
+		name = makeDNS(name)
+		uid, err := u.updateOne(ns, name, owners, ownerlabels, finalizers, res)
 		if err != nil {
 			return err
 		}
@@ -143,15 +160,8 @@ func (u *TranslationUpdater) deleteTranslation(tr v1.Translation) error {
 	return nil
 }
 
-func (u *TranslationUpdater) updateOne(key string, prefix string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
-	ns, name, err := extractNames(key)
-	if err != nil {
-		return "", err
-	}
-	name = fmt.Sprintf("%s.%s", prefix, name)
-	name = makeDNS(name)
+func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
 	clog := log.WithFields(log.Fields{
-		"key":       key,
 		"namespace": ns,
 		"name":      name,
 	})
@@ -210,17 +220,16 @@ func (u *TranslationUpdater) updateOne(key string, prefix string, owners []metav
 	return newObj.ObjectMeta.UID, nil
 }
 
-func extractNames(key string) (string, string, error) {
-	sep := strings.SplitN(key, "/", 2)
-	if len(sep) == 1 {
-		// Probably a namespace-less resource like Node.
-		// Use the default namespace.
-		return metav1.NamespaceDefault, sep[0], nil
+func extractName(key string, hasNamespace bool) (string, error) {
+	expected := 1
+	if hasNamespace {
+		expected = 2
 	}
-	if len(sep) != 2 {
-		return "", "", fmt.Errorf("Unrecognized key %s", key)
+	sep := strings.SplitN(key, "/", expected)
+	if len(sep) != expected {
+		return "", fmt.Errorf("Unrecognized key %s", key)
 	}
-	return sep[0], sep[1], nil
+	return sep[expected-1], nil
 }
 
 func makeDNS(name string) string {
