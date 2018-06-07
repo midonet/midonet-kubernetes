@@ -43,6 +43,57 @@ func newNodeConverter() converter.Converter {
 	return &nodeConverter{}
 }
 
+type nodeAddress struct {
+	routerPortID uuid.UUID
+	nodeIP       net.IP
+	ip           net.IP
+}
+
+func (i *nodeAddress) Convert(key string, config *midonet.Config) ([]converter.BackendResource, error) {
+	routerID := config.ClusterRouter
+	routeID := converter.IDForKey("Node Address", key)
+	return []converter.BackendResource{
+		// Forward the traffic to Node.Status.Addresses to the Node IP,
+		// assuming that the node network can forward it.
+		&midonet.Route{
+			Parent:           midonet.Parent{ID: &routerID},
+			ID:               &routeID,
+			DstNetworkAddr:   i.ip,
+			DstNetworkLength: 32,
+			SrcNetworkAddr:   net.ParseIP("0.0.0.0"),
+			SrcNetworkLength: 0,
+			NextHopPort:      &i.routerPortID,
+			NextHopGateway:   i.nodeIP,
+			Type:             "Normal",
+		},
+	}, nil
+}
+
+func nodeAddresses(nodeKey string, routerPortID uuid.UUID, nodeIP net.IP, as []v1.NodeAddress) converter.SubResourceMap {
+	subs := make(converter.SubResourceMap)
+	for _, a := range as {
+		typ := a.Type
+		if typ != v1.NodeExternalIP && typ != v1.NodeInternalIP {
+			continue
+		}
+		ip := net.ParseIP(a.Address)
+		if ip == nil {
+			// REVISIT: can this happen?
+			log.WithFields(log.Fields{
+				"node":    nodeKey,
+				"address": a.Address,
+			}).Fatal("Unparsable Node Address")
+		}
+		name := fmt.Sprintf("%s/%s/%s", nodeKey, typ, ip)
+		subs[name] = &nodeAddress{
+			routerPortID: routerPortID,
+			nodeIP:       nodeIP,
+			ip:           ip,
+		}
+	}
+	return subs
+}
+
 func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	baseID := IDForKey(key)
 	routerPortMAC := converter.MACForKey(key)
@@ -54,8 +105,8 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 	nodeSNATRuleID := converter.SubID(baseID, "Node Port SNAT Rule")
 	routerPortID := converter.SubID(baseID, "Router Port")
 	subnetRouteID := converter.SubID(baseID, "Route")
-	apiRouteID := converter.SubID(baseID, "APIRoute")
 	spec := obj.(*v1.Node).Spec
+	status := obj.(*v1.Node).Status
 	meta := obj.(*v1.Node).ObjectMeta
 	bridgeName := key
 	si, err := GetSubnetInfo(spec.PodCIDR)
@@ -66,9 +117,7 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 		{si.GatewayIP.IP, si.GatewayIP.Mask},
 	}
 	gatewayIP := si.GatewayIP.IP.String()
-	nodeIP := si.NodeIP.IP.String()
-	apiSubnetAddr := config.KubernetesAPISubnet.IP
-	apiSubnetLen, _ := config.KubernetesAPISubnet.Mask.Size()
+	nodeIP := si.NodeIP.IP
 	subnetAddr := si.Subnet.IP
 	subnetLen, _ := si.Subnet.Mask.Size()
 	hostID, err := uuid.Parse(meta.Annotations[converter.HostIDAnnotation])
@@ -137,21 +186,6 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 			PortID:        &nodePortID,
 			InterfaceName: IFName(),
 		},
-		// Forward the apiserver traffic to the Node IP, assuming that
-		// the node network can forward it to the apiserver.
-		// REVISIT: Probably this should be optional as it might not be
-		// appropriate for every deployments.
-		&midonet.Route{
-			Parent:           midonet.Parent{ID: &routerID},
-			ID:               &apiRouteID,
-			DstNetworkAddr:   apiSubnetAddr,
-			DstNetworkLength: apiSubnetLen,
-			SrcNetworkAddr:   subnetAddr,
-			SrcNetworkLength: subnetLen,
-			NextHopPort:      &routerPortID,
-			NextHopGateway:   si.NodeIP.IP,
-			Type:             "Normal",
-		},
 		// In the out-filter chain of the Node port, SNAT traffic from
 		// the Node IP.  (It's usually the traffic routed by the above
 		// route for apiserver.)  Otherwise, the return traffic will not
@@ -164,7 +198,7 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 			ID:           &nodeSNATRuleID,
 			Type:         "snat",
 			DLType:       0x800,
-			NWSrcAddress: nodeIP,
+			NWSrcAddress: nodeIP.String(),
 			NWSrcLength:  32,
 			NATTargets: &[]midonet.NATTarget{
 				{
@@ -177,5 +211,5 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 			},
 			FlowAction: "continue",
 		},
-	}, nil, nil
+	}, nodeAddresses(key, routerPortID, nodeIP, status.Addresses), nil
 }
