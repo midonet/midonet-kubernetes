@@ -24,9 +24,9 @@ import (
 	"github.com/containernetworking/plugins/pkg/ip"
 	"github.com/containernetworking/plugins/pkg/ipam"
 	"github.com/containernetworking/plugins/pkg/ns"
+	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 	"github.com/sirupsen/logrus"
 	"github.com/vishvananda/netlink"
-	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 )
 
 func Min(a, b int) int {
