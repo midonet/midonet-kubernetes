@@ -74,29 +74,3 @@ func (_ *serviceConverter) Convert(key string, obj interface{}, config *midonet.
 	}
 	return resources, subs, nil
 }
-
-type servicePort struct {
-	portKey string
-	ip      string
-	proto   int
-	port    int
-}
-
-func (s *servicePort) Convert(key string, config *midonet.Config) ([]converter.BackendResource, error) {
-	svcsChainID := converter.ServicesChainID(config)
-	jumpRuleID := converter.IDForKey("ServicePortSub", key)
-	portChainID := converter.IDForKey("ServicePort", s.portKey)
-	return []converter.BackendResource{
-		&midonet.Rule{
-			Parent:       midonet.Parent{ID: &svcsChainID},
-			ID:           &jumpRuleID,
-			DLType:       0x800,
-			NWDstAddress: s.ip,
-			NWDstLength:  32,
-			NWProto:      s.proto,
-			TPDst:        &midonet.PortRange{Start: s.port, End: s.port},
-			Type:         "jump",
-			JumpChainID:  &portChainID,
-		},
-	}, nil
-}
