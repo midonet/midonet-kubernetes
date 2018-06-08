@@ -72,13 +72,16 @@ func (c *Client) Push(resources []APIResource) error {
 		if err != nil {
 			return err
 		}
-		if resp.StatusCode == 404 {
+		if resp.StatusCode == 404 || resp.StatusCode == 400 {
 			// There are a few cases we can see 404 here.
 			// - The resource is HasParent and the parent has not been
 			//   created yet
 			// - The resource has a reference to the other resources (e.g.
 			//   filter chains for a Bridge) and they have not been created
 			//   yet
+			// Also, MidoNet API returns 400 in a similar cases.
+			// - When the port referenced by Route.nextHopPort doesn't exist.
+			//   (ROUTE_NEXT_HOP_PORT_NOT_NULL)
 			log.WithFields(log.Fields{
 				"resource": res,
 			}).Info("Referent doesn't exist yet?")
