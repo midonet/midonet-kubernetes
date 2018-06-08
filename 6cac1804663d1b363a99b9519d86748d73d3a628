@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "abcffbaa_963a0ac2",
+        "filename": "pkg/converter/endpoints/converter.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-08T11:29:32Z",
+      "side": 1,
+      "message": "Missing \u0027s\u0027?",
+      "range": {
+        "startLine": 76,
+        "startChar": 9,
+        "endLine": 76,
+        "endChar": 10
+      },
+      "revId": "6cac1804663d1b363a99b9519d86748d73d3a628",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
