@@ -17,7 +17,6 @@ package endpoints
 
 import (
 	"fmt"
-	"strings"
 
 	"k8s.io/api/core/v1"
 
@@ -26,23 +25,18 @@ import (
 )
 
 type endpoint struct {
+	portKey  string
 	svcIP    string
 	ip       string
 	port     int
 	protocol v1.Protocol
 }
 
-func portKeyFromEPKey(epKey string) string {
-	// a epKey looks like Namespace/Name/EndpointPort.Name/...
-	sep := strings.Split(epKey, "/")
-	return strings.Join(sep[:3], "/")
-}
-
 func (ep *endpoint) Convert(epKey string, config *midonet.Config) ([]converter.BackendResource, error) {
 	// REVISIT: An assumption here is that, if ServicePort.Name is empty,
 	// the corresponding EndpointPort.Name is also empty.  It isn't clear
 	// to me (yamamoto) from the documentation.
-	portKey := portKeyFromEPKey(epKey)
+	portKey := ep.portKey
 	portChainID := converter.IDForKey("ServicePort", portKey)
 	baseID := converter.IDForKey("Endpoint", epKey)
 	epChainID := baseID
