@@ -22,6 +22,30 @@
       "revId": "b9dbe8234425b309309c32315b1036ce20360728",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53b508c6_40d525c4",
+        "filename": "README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-06-08T03:57:09Z",
+      "side": 1,
+      "message": "if it\u0027s activated before this patch lands, vote -1 on this.\notherwise we can update with another patch.",
+      "parentUuid": "80ddad6f_336da424",
+      "range": {
+        "startLine": 131,
+        "startChar": 11,
+        "endLine": 131,
+        "endChar": 36
+      },
+      "revId": "b9dbe8234425b309309c32315b1036ce20360728",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
