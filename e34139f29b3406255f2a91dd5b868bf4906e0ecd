@@ -46,6 +46,30 @@
       "revId": "e34139f29b3406255f2a91dd5b868bf4906e0ecd",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9150c59e_c3316811",
+        "filename": "Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-08T08:20:38Z",
+      "side": 1,
+      "message": "Oh, thanks! I overlooked the link in the commit message and just assumed the flags where passed transparently to default linker. It is totally ok then.",
+      "parentUuid": "b06d8497_799ddf14",
+      "range": {
+        "startLine": 14,
+        "startChar": 40,
+        "endLine": 14,
+        "endChar": 45
+      },
+      "revId": "e34139f29b3406255f2a91dd5b868bf4906e0ecd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
