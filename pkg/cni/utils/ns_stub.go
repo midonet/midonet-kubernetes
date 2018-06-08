@@ -12,22 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// +build linux
+// +build !linux
 
 package utils
 
 import (
-	"fmt"
-	"os"
-
-	"golang.org/x/sys/unix"
+	"github.com/sirupsen/logrus"
 )
 
-// An exported copy of getCurrentThreadNetNSPath
-// from github.com/containernetworking/plugins/pkg/ns/ns_linux.go
 func GetCurrentThreadNetNSPath() string {
-	// /proc/self/ns/net returns the namespace of the main thread, not
-	// of whatever thread this goroutine is running on.  Make sure we
-	// use the thread's net namespace since the thread is switching around
-	return fmt.Sprintf("/proc/%d/task/%d/ns/net", os.Getpid(), unix.Gettid())
+	logrus.Fatal("Stub implementation used")
+	return ""
 }
