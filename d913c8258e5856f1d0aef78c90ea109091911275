@@ -22,6 +22,30 @@
       "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eeb21936_b0af8e75",
+        "filename": "pkg/converter/handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-06-08T03:47:37Z",
+      "side": 1,
+      "message": "it\u0027s still called by pkg/controller/controller.go.\ncurrently nothing needs this as we use other mechanisms for cleanup. (k8s g/c or finalizers.)",
+      "parentUuid": "9313b15a_5c1caa83",
+      "range": {
+        "startLine": 99,
+        "startChar": 18,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
