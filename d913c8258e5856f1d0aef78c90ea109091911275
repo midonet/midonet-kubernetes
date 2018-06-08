@@ -46,6 +46,30 @@
       "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6157ebfe_4c1dfdd9",
+        "filename": "pkg/converter/handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-08T11:43:06Z",
+      "side": 1,
+      "message": "So should we remove the Delete and its references in controller.go/processItem (just print \u0027Deleted.\u0027 and return nil)? This way would be clearer that we can only Update but we can\u0027t Delete.",
+      "parentUuid": "eeb21936_b0af8e75",
+      "range": {
+        "startLine": 99,
+        "startChar": 18,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
