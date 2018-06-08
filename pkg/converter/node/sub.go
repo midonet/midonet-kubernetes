@@ -30,9 +30,9 @@ type nodeAddress struct {
 	ip           net.IP
 }
 
-func (i *nodeAddress) Convert(key string, config *midonet.Config) ([]converter.BackendResource, error) {
+func (i *nodeAddress) Convert(key converter.Key, config *midonet.Config) ([]converter.BackendResource, error) {
 	routerID := config.ClusterRouter
-	routeID := converter.IDForKey("Node Address", key)
+	routeID := converter.IDForKey("Node Address", key.Key())
 	return []converter.BackendResource{
 		// Forward the traffic to Node.Status.Addresses to the Node IP,
 		// assuming that the node network can forward it.

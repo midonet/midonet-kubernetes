@@ -43,7 +43,7 @@ func newNodeConverter() converter.Converter {
 	return &nodeConverter{}
 }
 
-func nodeAddresses(nodeKey string, routerPortID uuid.UUID, nodeIP net.IP, as []v1.NodeAddress) converter.SubResourceMap {
+func nodeAddresses(nodeKey converter.Key, routerPortID uuid.UUID, nodeIP net.IP, as []v1.NodeAddress) converter.SubResourceMap {
 	subs := make(converter.SubResourceMap)
 	for _, a := range as {
 		typ := a.Type
@@ -58,8 +58,11 @@ func nodeAddresses(nodeKey string, routerPortID uuid.UUID, nodeIP net.IP, as []v
 				"address": a.Address,
 			}).Fatal("Unparsable Node Address")
 		}
-		name := fmt.Sprintf("%s/%s/%s", nodeKey, typ, ip)
-		subs[name] = &nodeAddress{
+		key := converter.Key{
+			Kind: "Node", // REVISIT: use a dedicated kind
+			Name: fmt.Sprintf("%s/%s/%s", nodeKey.Name, typ, ip),
+		}
+		subs[key] = &nodeAddress{
 			routerPortID: routerPortID,
 			nodeIP:       nodeIP,
 			ip:           ip,
@@ -68,13 +71,13 @@ func nodeAddresses(nodeKey string, routerPortID uuid.UUID, nodeIP net.IP, as []v
 	return subs
 }
 
-func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
-	baseID := IDForKey(key)
-	routerPortMAC := converter.MACForKey(key)
+func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+	baseID := IDForKey(key.Key())
+	routerPortMAC := converter.MACForKey(key.Key())
 	routerID := config.ClusterRouter
 	bridgeID := baseID
 	bridgePortID := converter.SubID(baseID, "Bridge Port")
-	nodePortID := PortIDForKey(key)
+	nodePortID := PortIDForKey(key.Key())
 	nodePortChainID := converter.SubID(baseID, "Node Port Chain")
 	nodeSNATRuleID := converter.SubID(baseID, "Node Port SNAT Rule")
 	routerPortID := converter.SubID(baseID, "Router Port")
@@ -82,7 +85,7 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 	spec := obj.(*v1.Node).Spec
 	status := obj.(*v1.Node).Status
 	meta := obj.(*v1.Node).ObjectMeta
-	bridgeName := key
+	bridgeName := key.Key()
 	si, err := GetSubnetInfo(spec.PodCIDR)
 	if err != nil {
 		log.WithField("node", obj).Fatal("Failed to parse PodCIDR")
@@ -145,7 +148,7 @@ func (c *nodeConverter) Convert(key string, obj interface{}, config *midonet.Con
 		},
 		&midonet.Chain{
 			ID:       &nodePortChainID,
-			Name:     fmt.Sprintf("KUBE-NODE-%s", key),
+			Name:     fmt.Sprintf("KUBE-NODE-%s", key.Key()),
 			TenantID: config.Tenant,
 		},
 		&midonet.Port{
