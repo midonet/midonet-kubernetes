@@ -38,8 +38,8 @@ func GetSubnetInfo(podCIDR string) (*SubnetInfo, error) {
 	gatewayIP := ip.NextIP(addr)
 	nodeIP := ip.NextIP(gatewayIP)
 	return &SubnetInfo{
-		GatewayIP: net.IPNet{gatewayIP, subnet.Mask},
-		NodeIP:    net.IPNet{nodeIP, subnet.Mask},
+		GatewayIP: net.IPNet{IP: gatewayIP, Mask: subnet.Mask},
+		NodeIP:    net.IPNet{IP: nodeIP, Mask: subnet.Mask},
 		Subnet:    *subnet,
 	}, nil
 }
