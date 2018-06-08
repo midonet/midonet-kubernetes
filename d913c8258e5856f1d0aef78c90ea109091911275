@@ -70,6 +70,30 @@
       "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d17f4e9_3451dd21",
+        "filename": "pkg/converter/handler.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-06-08T11:57:49Z",
+      "side": 1,
+      "message": "currently we don\u0027t have handlers using this Delete function but it\u0027s possible to have a handler using this function. (as we used to have until recent changes.)",
+      "parentUuid": "6157ebfe_4c1dfdd9",
+      "range": {
+        "startLine": 99,
+        "startChar": 18,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "d913c8258e5856f1d0aef78c90ea109091911275",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
