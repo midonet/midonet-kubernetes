@@ -105,6 +105,8 @@ func (c *Client) Push(resources []APIResource) error {
 					}
 				}
 				// assume 409 meant ok
+				// REVISIT: confirm that the existing resource is
+				// same enough as what we want.
 				continue
 			}
 		}
