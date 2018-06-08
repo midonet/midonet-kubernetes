@@ -22,6 +22,30 @@
       "revId": "e34139f29b3406255f2a91dd5b868bf4906e0ecd",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b06d8497_799ddf14",
+        "filename": "Dockerfile",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-06-08T03:38:40Z",
+      "side": 1,
+      "message": "try \"go tool link --help\" or https://golang.org/cmd/link/\n\ni don\u0027t know if they have long versions. even if they have, they are undocumented.",
+      "parentUuid": "42fd00a5_2f322177",
+      "range": {
+        "startLine": 14,
+        "startChar": 40,
+        "endLine": 14,
+        "endChar": 45
+      },
+      "revId": "e34139f29b3406255f2a91dd5b868bf4906e0ecd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
