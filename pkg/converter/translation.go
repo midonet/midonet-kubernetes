@@ -217,6 +217,13 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 		clog.WithError(err).Error("Patch")
 		return "", err
 	}
+	if jsonpatch.Equal(patchBytes, []byte(`{}`)) {
+		log.WithFields(log.Fields{
+			"namespace": ns,
+			"name":      name,
+		}).Debug("Skipping no-op update of Translation")
+		return existingObj.ObjectMeta.UID, nil
+	}
 	log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
