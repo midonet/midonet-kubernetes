@@ -43,32 +43,6 @@ func newNodeConverter() converter.Converter {
 	return &nodeConverter{}
 }
 
-type nodeAddress struct {
-	routerPortID uuid.UUID
-	nodeIP       net.IP
-	ip           net.IP
-}
-
-func (i *nodeAddress) Convert(key string, config *midonet.Config) ([]converter.BackendResource, error) {
-	routerID := config.ClusterRouter
-	routeID := converter.IDForKey("Node Address", key)
-	return []converter.BackendResource{
-		// Forward the traffic to Node.Status.Addresses to the Node IP,
-		// assuming that the node network can forward it.
-		&midonet.Route{
-			Parent:           midonet.Parent{ID: &routerID},
-			ID:               &routeID,
-			DstNetworkAddr:   i.ip,
-			DstNetworkLength: 32,
-			SrcNetworkAddr:   net.ParseIP("0.0.0.0"),
-			SrcNetworkLength: 0,
-			NextHopPort:      &i.routerPortID,
-			NextHopGateway:   i.nodeIP,
-			Type:             "Normal",
-		},
-	}, nil
-}
-
 func nodeAddresses(nodeKey string, routerPortID uuid.UUID, nodeIP net.IP, as []v1.NodeAddress) converter.SubResourceMap {
 	subs := make(converter.SubResourceMap)
 	for _, a := range as {
