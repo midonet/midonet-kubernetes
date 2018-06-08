@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e1b37e3_6995f3de",
+        "filename": "pkg/cni/utils/utils_linux.go",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-06-08T10:17:07Z",
+      "side": 1,
+      "message": "Missing \u0027// +build linux\u0027 ?",
+      "revId": "b7608d9da52a0e732fc1239057b33d1b394e1d12",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
