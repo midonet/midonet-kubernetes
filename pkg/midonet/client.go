@@ -68,7 +68,7 @@ func (c *Client) Push(resources []APIResource) error {
 		// REVISIT: maybe we should save updates (and thus zk and
 		// midolman loads) by performing GET and compare first.
 		// Or we can make the MidoNet API detect and ignore no-op updates.
-		resp, err := c.post(res)
+		resp, body, err := c.post(res)
 		if err != nil {
 			return err
 		}
@@ -86,7 +86,7 @@ func (c *Client) Push(resources []APIResource) error {
 		}
 		if resp.StatusCode == 409 {
 			if res.Path("PUT") != "" {
-				resp, err = c.put(res)
+				resp, body, err = c.put(res)
 				if err != nil {
 					return err
 				}
@@ -106,7 +106,10 @@ func (c *Client) Push(resources []APIResource) error {
 			}
 		}
 		if resp.StatusCode/100 != 2 {
-			log.WithField("statusCode", resp.StatusCode).Fatal("Unexpected status code")
+			log.WithFields(log.Fields{
+				"statusCode": resp.StatusCode,
+				"body":       body,
+			}).Fatal("Unexpected status code")
 		}
 	}
 	return nil
@@ -114,7 +117,7 @@ func (c *Client) Push(resources []APIResource) error {
 
 func (c *Client) Delete(resources []APIResource) error {
 	for _, res := range resources {
-		resp, _, err := c.doRequest("DELETE", res.Path("DELETE"), nil, "")
+		resp, body, err := c.doRequest("DELETE", res.Path("DELETE"), nil, "")
 		if err != nil {
 			return err
 		}
@@ -122,20 +125,21 @@ func (c *Client) Delete(resources []APIResource) error {
 		// MidoNet topology modifications, it happens e.g. when a removal
 		// of a Chain cascade-deleted Rules.
 		if resp.StatusCode/100 != 2 && resp.StatusCode != 404 {
-			log.WithField("statusCode", resp.StatusCode).Fatal("Unexpected status code")
+			log.WithFields(log.Fields{
+				"statusCode": resp.StatusCode,
+				"body":       body,
+			}).Fatal("Unexpected status code")
 		}
 	}
 	return nil
 }
 
-func (c *Client) post(res APIResource) (*http.Response, error) {
-	resp, _, err := c.doRequest("POST", res.Path("POST"), res, "")
-	return resp, err
+func (c *Client) post(res APIResource) (*http.Response, string, error) {
+	return c.doRequest("POST", res.Path("POST"), res, "")
 }
 
-func (c *Client) put(res APIResource) (*http.Response, error) {
-	resp, _, err := c.doRequest("PUT", res.Path("PUT"), res, "")
-	return resp, err
+func (c *Client) put(res APIResource) (*http.Response, string, error) {
+	return c.doRequest("PUT", res.Path("PUT"), res, "")
 }
 
 func (c *Client) get(id, result APIResource) (*http.Response, error) {
