@@ -45,15 +45,12 @@ func NewTranslationUpdater(client mncli.Interface) *TranslationUpdater {
 	}
 }
 
-func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error {
-	var prefix string
+func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[Key][]BackendResource) error {
 	var owners []metav1.OwnerReference
 	var ownerlabels map[string]string
 	var requirement *labels.Requirement
 	var ns string
-	hasNamespace := true
 	if parentObj != nil {
-		prefix = strings.ToLower(parentKind.Kind)
 		pmeta, err := meta.Accessor(parentObj)
 		if err != nil {
 			log.WithError(err).Error("Accessor")
@@ -78,13 +75,9 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 		if ns == "" {
 			// Namespace-less resource like Node.  Use the default
 			// namespace for the corresponding Translation resources.
-			hasNamespace = false
 			ns = metav1.NamespaceDefault
 		}
 	} else {
-		// Note: this prefix should be unique enough so that it won't
-		// collide with possible future k8s resource types.
-		prefix = "midonet-global"
 		owners = nil
 		ownerlabels = map[string]string{GlobalLabel: ""}
 		r, err := labels.NewRequirement(GlobalLabel, selection.Exists, nil)
@@ -97,12 +90,7 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	finalizers := []string{MidoNetAPIDeleter}
 	var uids []types.UID
 	for k, res := range resources {
-		// TODO: Stop extracting name from key
-		name, err := extractName(k, hasNamespace)
-		if err != nil {
-			return err
-		}
-		name = fmt.Sprintf("%s.%s", prefix, name)
+		name := k.TranslationName()
 		name = makeDNS(name)
 		uid, err := u.updateOne(ns, name, owners, ownerlabels, finalizers, res)
 		if err != nil {
@@ -218,18 +206,6 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 		"name":      name,
 	}).Info("Updated Translation")
 	return newObj.ObjectMeta.UID, nil
-}
-
-func extractName(key string, hasNamespace bool) (string, error) {
-	expected := 1
-	if hasNamespace {
-		expected = 2
-	}
-	sep := strings.SplitN(key, "/", expected)
-	if len(sep) != expected {
-		return "", fmt.Errorf("Unrecognized key %s", key)
-	}
-	return sep[expected-1], nil
 }
 
 func makeDNS(name string) string {

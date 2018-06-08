@@ -31,7 +31,7 @@ func newServiceConverter() converter.Converter {
 	return &serviceConverter{}
 }
 
-func (_ *serviceConverter) Convert(key string, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+func (_ *serviceConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	resources := make([]converter.BackendResource, 0)
 	subs := make(converter.SubResourceMap)
 	spec := obj.(*v1.Service).Spec
@@ -44,7 +44,7 @@ func (_ *serviceConverter) Convert(key string, obj interface{}, config *midonet.
 		// endpoints converter so that it can find the right chain
 		// to add rules. (portChainID)
 		// NameSpace/Name/ServicePort.Name
-		portKey := fmt.Sprintf("%s/%s", key, p.Name)
+		portKey := fmt.Sprintf("%s/%s", key.Key(), p.Name)
 		portChainID := converter.IDForKey("ServicePort", portKey)
 		resources = append(resources, &midonet.Chain{
 			ID:       &portChainID,
@@ -69,8 +69,11 @@ func (_ *serviceConverter) Convert(key string, obj interface{}, config *midonet.
 		// because we want to avoid re-creating the chain itself
 		// as it would remove rules in the chain.  (Those rules are
 		// managed by a separate "endpoints" controller.)
-		portSubKey := fmt.Sprintf("%s/%s/%d/%d", portKey, svcIP, proto, port)
-		subs[portSubKey] = &servicePort{portKey, svcIP, proto, port}
+		k := converter.Key{
+			Kind: "Service", // REVISIT: use a dedicated kind
+			Name: fmt.Sprintf("%s/%s/%d/%d", portKey, svcIP, proto, port),
+		}
+		subs[k] = &servicePort{portKey, svcIP, proto, port}
 	}
 	return resources, subs, nil
 }

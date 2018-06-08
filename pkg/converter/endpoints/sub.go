@@ -25,20 +25,27 @@ import (
 )
 
 type endpoint struct {
-	portKey  string
-	svcIP    string
-	ip       string
-	port     int
-	protocol v1.Protocol
+	endpointsKey string
+	portName     string
+	svcIP        string
+	ip           string
+	port         int
+	protocol     v1.Protocol
 }
 
-func (ep *endpoint) Convert(epKey string, config *midonet.Config) ([]converter.BackendResource, error) {
+func (ep *endpoint) portKey() string {
+	// Note: portKey format should be consistent with the
+	// service converter.
+	return fmt.Sprintf("%s/%s", ep.endpointsKey, ep.portName)
+}
+
+func (ep *endpoint) Convert(epKey converter.Key, config *midonet.Config) ([]converter.BackendResource, error) {
 	// REVISIT: An assumption here is that, if ServicePort.Name is empty,
 	// the corresponding EndpointPort.Name is also empty.  It isn't clear
 	// to me (yamamoto) from the documentation.
-	portKey := ep.portKey
+	portKey := ep.portKey()
 	portChainID := converter.IDForKey("ServicePort", portKey)
-	baseID := converter.IDForKey("Endpoint", epKey)
+	baseID := converter.IDForKey("Endpoint", epKey.Key())
 	epChainID := baseID
 	epJumpRuleID := converter.SubID(baseID, "Jump to Endpoint")
 	epDNATRuleID := converter.SubID(baseID, "DNAT")
@@ -46,7 +53,7 @@ func (ep *endpoint) Convert(epKey string, config *midonet.Config) ([]converter.B
 	return []converter.BackendResource{
 		&midonet.Chain{
 			ID:       &epChainID,
-			Name:     fmt.Sprintf("KUBE-SEP-%s", epKey),
+			Name:     fmt.Sprintf("KUBE-SEP-%s", epKey.Key()),
 			TenantID: config.Tenant,
 		},
 		// REVISIT: kube-proxy implements load-balancing with its

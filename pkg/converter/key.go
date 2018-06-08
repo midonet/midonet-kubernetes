@@ -16,20 +16,39 @@
 package converter
 
 import (
-	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
-	"github.com/midonet/midonet-kubernetes/pkg/midonet"
+	"fmt"
+	"strings"
+
+	"k8s.io/client-go/tools/cache"
 )
 
-// backend resources converted from k8s resources
-type BackendResource interface {
-	ToAPI(interface{}) (*v1.BackendResource, error)
+type Key struct {
+	Kind      string
+	Namespace string
+	Name      string
 }
 
-func ToAPI(r BackendResource) (*v1.BackendResource, error) {
-	b, err := r.ToAPI(r)
-	return b, err
+func NewKeyFromClientKey(kind, strKey string) (Key, error) {
+	ns, name, err := cache.SplitMetaNamespaceKey(strKey)
+	if err != nil {
+		return Key{}, err
+	}
+	return Key{
+		Kind:      kind,
+		Namespace: ns,
+		Name:      name,
+	}, nil
 }
 
-type Converter interface {
-	Convert(key Key, obj interface{}, config *midonet.Config) ([]BackendResource, SubResourceMap, error)
+// Returns MetaNamespaceKeyFunc style key
+func (k *Key) Key() string {
+	if k.Namespace == "" {
+		return k.Name
+	}
+	return fmt.Sprintf("%s/%s", k.Namespace, k.Name)
+}
+
+func (k *Key) TranslationName() string {
+	// REVISIT: include a version in the name for safer upgrade.
+	return fmt.Sprintf("%s.%s", strings.ToLower(k.Kind), k.Name)
 }
