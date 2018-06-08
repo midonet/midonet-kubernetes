@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package utils
 
 import (
@@ -21,12 +22,9 @@ import (
 
 	"github.com/containernetworking/cni/pkg/skel"
 	cnitypes "github.com/containernetworking/cni/pkg/types"
-	"github.com/containernetworking/plugins/pkg/ip"
 	"github.com/containernetworking/plugins/pkg/ipam"
-	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 	"github.com/sirupsen/logrus"
-	"github.com/vishvananda/netlink"
 )
 
 func Min(a, b int) int {
@@ -34,37 +32,6 @@ func Min(a, b int) int {
 		return a
 	}
 	return b
-}
-
-// CleanUpNamespace deletes the devices in the network namespace.
-func CleanUpNamespace(args *skel.CmdArgs, logger *logrus.Entry) error {
-	// Only try to delete the device if a namespace was passed in.
-	if args.Netns != "" {
-		logger.WithFields(logrus.Fields{
-			"netns": args.Netns,
-			"iface": args.IfName,
-		}).Debug("Checking namespace & device exist.")
-		devErr := ns.WithNetNSPath(args.Netns, func(_ ns.NetNS) error {
-			_, err := netlink.LinkByName(args.IfName)
-			return err
-		})
-
-		if devErr == nil {
-			fmt.Fprintf(os.Stderr, "MidoNet CNI deleting device in netns %s\n", args.Netns)
-			err := ns.WithNetNSPath(args.Netns, func(_ ns.NetNS) error {
-				_, err := ip.DelLinkByNameAddr(args.IfName)
-				return err
-			})
-
-			if err != nil {
-				return err
-			}
-		} else {
-			logger.WithField("ifName", args.IfName).Info("veth does not exist, no need to clean up.")
-		}
-	}
-
-	return nil
 }
 
 // CleanUpIPAM calls IPAM plugin to release the IP address.
