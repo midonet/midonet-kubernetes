@@ -18,9 +18,11 @@ package converter
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 
+	jsonpatch "github.com/evanphx/json-patch"
 	log "github.com/sirupsen/logrus"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -189,22 +191,37 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 		return "", err
 	}
 	// NOTE: CRs have AllowUnconditionalUpdate=false
-	// REVISIT: Probably should use Patch to avoid overwriting unrelated fields
+	// NOTE: CRs don't support stragetic merge patch
 	existingObj, err := u.client.MidonetV1().Translations(ns).Get(name, metav1.GetOptions{})
 	if err != nil {
 		clog.WithError(err).Error("Get")
 		return "", err
 	}
-	obj.ObjectMeta.ResourceVersion = existingObj.ObjectMeta.ResourceVersion
-	newObj, err = u.client.MidonetV1().Translations(ns).Update(obj)
+	oldData, err := json.Marshal(existingObj)
 	if err != nil {
-		clog.WithError(err).Error("Update")
+		return "", err
+	}
+	desiredObj := existingObj.DeepCopy()
+	desiredObj.Resources = obj.Resources
+	desiredData, err := json.Marshal(desiredObj)
+	if err != nil {
+		return "", err
+	}
+	patchBytes, err := jsonpatch.CreateMergePatch(oldData, desiredData)
+	if err != nil {
+		return "", err
+	}
+	clog = clog.WithField("patch", string(patchBytes))
+	newObj, err = u.client.MidonetV1().Translations(ns).Patch(name, types.MergePatchType, patchBytes)
+	if err != nil {
+		clog.WithError(err).Error("Patch")
 		return "", err
 	}
 	log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
-	}).Info("Updated Translation")
+		"patch":     string(patchBytes),
+	}).Info("Patched Translation")
 	return newObj.ObjectMeta.UID, nil
 }
 
