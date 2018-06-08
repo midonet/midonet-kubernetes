@@ -27,15 +27,15 @@ import (
 // For example, we represent a k8s service as a set of "ServicePort"
 // sub resources.
 type SubResource interface {
-	Convert(key string, config *midonet.Config) ([]BackendResource, error)
+	Convert(key Key, config *midonet.Config) ([]BackendResource, error)
 }
 
-type SubResourceMap map[string]SubResource
+type SubResourceMap map[Key]SubResource
 
 type Updater interface {
 	// NOTE: Pass GVK explicitly as List'ed objects don't have valid
 	// TypeMeta.  https://github.com/kubernetes/kubernetes/issues/3030
-	Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[string][]BackendResource) error
+	Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[Key][]BackendResource) error
 }
 
 type Handler struct {
@@ -52,12 +52,11 @@ func NewHandler(converter Converter, updater Updater, config *midonet.Config) *H
 	}
 }
 
-func (h *Handler) convertSubResources(key string, parentObj interface{}, added SubResourceMap, converted map[string][]BackendResource, clog *log.Entry) error {
+func (h *Handler) convertSubResources(added SubResourceMap, converted map[Key][]BackendResource, clog *log.Entry) error {
 	for k, r := range added {
 		v, err := r.Convert(k, h.config)
 		if err != nil {
 			clog.WithError(err).WithFields(log.Fields{
-				"key":     key,
 				"sub-key": k,
 			}).Error("failed to convert a sub resource")
 			return err
@@ -69,8 +68,12 @@ func (h *Handler) convertSubResources(key string, parentObj interface{}, added S
 	return nil
 }
 
-func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
-	converted := make(map[string][]BackendResource)
+func (h *Handler) Update(strKey string, gvk schema.GroupVersionKind, obj interface{}) error {
+	key, err := NewKeyFromClientKey(gvk.Kind, strKey)
+	if err != nil {
+		return err
+	}
+	converted := make(map[Key][]BackendResource)
 	clog := log.WithFields(log.Fields{
 		"key": key,
 		"obj": obj,
@@ -83,7 +86,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	if len(v) > 0 {
 		converted[key] = v
 	}
-	err = h.convertSubResources(key, obj, subResources, converted, clog)
+	err = h.convertSubResources(subResources, converted, clog)
 	if err != nil {
 		clog.WithError(err).Error("Failed to convert sub resources")
 		return err

@@ -38,15 +38,13 @@ func endpoints(key string, svcIP string, subsets []v1.EndpointSubset) map[string
 	for _, s := range subsets {
 		for _, a := range s.Addresses {
 			for _, p := range s.Ports {
-				// Note: portKey format should be consistent with the
-				// service converter.
-				portKey := fmt.Sprintf("%s/%s", key, p.Name)
 				ep := endpoint{
-					portKey:  portKey,
-					svcIP:    svcIP,
-					ip:       a.IP,
-					port:     int(p.Port),
-					protocol: p.Protocol,
+					endpointsKey: key,
+					portName:     p.Name,
+					svcIP:        svcIP,
+					ip:           a.IP,
+					port:         int(p.Port),
+					protocol:     p.Protocol,
 				}
 				l := m[p.Name]
 				l = append(l, ep)
@@ -57,11 +55,10 @@ func endpoints(key string, svcIP string, subsets []v1.EndpointSubset) map[string
 	return m
 }
 
-func (c *endpointsConverter) Convert(key string, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
-	// Just return each endpoints as SubResource.
+func (c *endpointsConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	resources := make([]converter.BackendResource, 0)
 	subs := make(converter.SubResourceMap)
-	svcObj, exists, err := c.svcInformer.GetIndexer().GetByKey(key)
+	svcObj, exists, err := c.svcInformer.GetIndexer().GetByKey(key.Key())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -77,13 +74,16 @@ func (c *endpointsConverter) Convert(key string, obj interface{}, config *midone
 		return nil, nil, nil
 	}
 	endpoint := obj.(*v1.Endpoints)
-	for _, eps := range endpoints(key, svcIP, endpoint.Subsets) {
+	for _, eps := range endpoints(key.Key(), svcIP, endpoint.Subsets) {
 		for _, ep := range eps {
 			// We include almost everything in the key so that a modified
 			// endpoint is treated as another resource for the
 			// MidoNet side.  Note that MidoNet Chains and Rules are not
 			// updateable.
-			epKey := fmt.Sprintf("%s/%s/%s/%d/%s", ep.portKey, svcIP, ep.ip, ep.port, ep.protocol)
+			epKey := converter.Key{
+				Kind: "Endpoints", // REVISIT: use a dedicated kind
+				Name: fmt.Sprintf("%s/%s/%s/%s/%d/%s", key.Name, ep.portName, svcIP, ep.ip, ep.port, ep.protocol),
+			}
 			subs[epKey] = &ep
 		}
 	}
