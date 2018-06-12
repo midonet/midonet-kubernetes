@@ -15,6 +15,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/projectcalico/libcalico-go/lib/logutils"
@@ -22,6 +23,7 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes/scheme"
+	v1core "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/tools/record"
 
 	mnscheme "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned/scheme"
@@ -71,6 +73,11 @@ func main() {
 	mnscheme.AddToScheme(scheme.Scheme)
 	broadcaster := record.NewBroadcaster()
 	recorder := broadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "midonet-kube-controllers"})
+
+	broadcaster.StartLogging(func(format string, args ...interface{}) {
+		log.Info(fmt.Sprintf(format, args...))
+	})
+	broadcaster.StartRecordingToSink(&v1core.EventSinkImpl{Interface: k8sClientset.CoreV1().Events("")})
 
 	err = converter.EnsureGlobalResources(mnClientset, midonetCfg, recorder)
 	if err != nil {
