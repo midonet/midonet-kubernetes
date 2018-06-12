@@ -279,9 +279,14 @@ func checkTranslationUpdate(old *mnv1.Translation, new *mnv1.Translation) {
 	}
 }
 
+// makeDNS tweaks the given name so that it's usable as a Kubernetes
+// resource name.
+// REVISIT: probabaly we should truncate it when too long.
 func makeDNS(name string) string {
 	n := strings.Replace(name, "/", "-", -1)
 	n = strings.ToLower(n)
+	// If we changed anything, append the hash of the original string
+	// to maintain uniqueness.
 	if name != n {
 		h := sha1.New()
 		h.Write([]byte(name))
