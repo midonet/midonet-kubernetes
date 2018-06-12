@@ -38,6 +38,7 @@ import (
 
 	mnv1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
+	"github.com/midonet/midonet-kubernetes/pkg/k8s"
 )
 
 type TranslationUpdater struct {
@@ -54,11 +55,18 @@ func NewTranslationUpdater(client mncli.Interface, recorder record.EventRecorder
 
 func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObjInterface interface{}, resources map[Key][]BackendResource) error {
 	var parentObj runtime.Object
+	var parentRef *v1.ObjectReference
 	// REVISIT: Make the caller pass runtime.Object
 	if parentObjInterface != nil {
 		parentObj = parentObjInterface.(runtime.Object)
+		ref, err := k8s.GetReferenceForEvent(parentObj)
+		if err != nil {
+			return err
+		}
+		parentRef = ref
 	} else {
 		parentObj = nil
+		parentRef = nil
 	}
 	var owners []metav1.OwnerReference
 	var ownerlabels map[string]string
@@ -106,17 +114,17 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	for k, res := range resources {
 		name := k.TranslationName()
 		name = makeDNS(name)
-		uid, err := u.updateOne(parentObj, ns, name, owners, ownerlabels, finalizers, res)
+		uid, err := u.updateOne(parentRef, ns, name, owners, ownerlabels, finalizers, res)
 		if err != nil {
 			return err
 		}
 		uids = append(uids, uid)
 	}
 	// Remove stale translations
-	return u.deleteTranslations(parentObj, requirement, uids)
+	return u.deleteTranslations(parentRef, requirement, uids)
 }
 
-func (u *TranslationUpdater) deleteTranslations(parentObj runtime.Object, req *labels.Requirement, keepUIDs []types.UID) error {
+func (u *TranslationUpdater) deleteTranslations(parentRef *v1.ObjectReference, req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
 	// but it might be tricky to avoid races with ourselves:
@@ -143,8 +151,8 @@ func (u *TranslationUpdater) deleteTranslations(parentObj runtime.Object, req *l
 		if err != nil {
 			return err
 		}
-		if parentObj != nil {
-			u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationDeleted", "Translation %s/%s Deleted", tr.ObjectMeta.Namespace, tr.ObjectMeta.Name)
+		if parentRef != nil {
+			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationDeleted", "Translation %s/%s Deleted", tr.ObjectMeta.Namespace, tr.ObjectMeta.Name)
 		} else {
 			log.WithFields(log.Fields{
 				"namespace": tr.ObjectMeta.Namespace,
@@ -166,7 +174,7 @@ func (u *TranslationUpdater) deleteTranslation(tr mnv1.Translation) error {
 	return nil
 }
 
-func (u *TranslationUpdater) updateOne(parentObj runtime.Object, ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
+func (u *TranslationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
 	clog := log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
@@ -196,8 +204,8 @@ func (u *TranslationUpdater) updateOne(parentObj runtime.Object, ns, name string
 	clog = clog.WithField("obj", obj)
 	newObj, err := u.client.MidonetV1().Translations(ns).Create(obj)
 	if err == nil {
-		if parentObj != nil {
-			u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationCreated", "Translation %s/%s Created", ns, name)
+		if parentRef != nil {
+			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationCreated", "Translation %s/%s Created", ns, name)
 		} else {
 			log.WithFields(log.Fields{
 				"namespace": ns,
@@ -249,8 +257,8 @@ func (u *TranslationUpdater) updateOne(parentObj runtime.Object, ns, name string
 		"name":      name,
 		"patch":     string(patchBytes),
 	}).Debug("Patched Translation")
-	if parentObj != nil {
-		u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationUpdated", "Translation %s/%s Updated", ns, name)
+	if parentRef != nil {
+		u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationUpdated", "Translation %s/%s Updated", ns, name)
 	} else {
 		log.WithFields(log.Fields{
 			"namespace": ns,
