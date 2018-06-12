@@ -58,8 +58,11 @@ reflects them to the backend. (MidoNet API)
 ### Limitations
 
 To keep the pusher controller simple, there are a few assumptions about
-how a Translation can be updated.
+how a Translation can be updated.  The same restrictions apply in case
+of an upgrade of the controller with existing Translations.
 
-* The set of backend resources in a Translation does not change.
-* Unless a backend resource supports PUT in the backend, it does never be
+* The set of backend resources in a Translation should not change.
+  Adding a backend resource to a Translation is ok. Removing them is not.
+* Unless a backend resource supports PUT in the backend, it should never be
   changed in the Translation.
+* A backend resource should not belong to multiple Translations.
