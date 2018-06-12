@@ -15,39 +15,12 @@
 
 package converter
 
-import (
-	"fmt"
-	"strings"
-
-	"k8s.io/client-go/tools/cache"
+const (
+	// Changing TranslationVersion changes every Translation names
+	// and backend resource IDs this controller would produce.  That is,
+	// it effectively deletes every Translations and their backend resources
+	// and create them with different IDs.  While it would cause severe
+	// user traffic interruptions for a while, it can be useful when
+	// upgrading the controller with incompatible Translations.
+	TranslationVersion = "1"
 )
-
-type Key struct {
-	Kind      string
-	Namespace string
-	Name      string
-}
-
-func NewKeyFromClientKey(kind, strKey string) (Key, error) {
-	ns, name, err := cache.SplitMetaNamespaceKey(strKey)
-	if err != nil {
-		return Key{}, err
-	}
-	return Key{
-		Kind:      kind,
-		Namespace: ns,
-		Name:      name,
-	}, nil
-}
-
-// Returns MetaNamespaceKeyFunc style key
-func (k *Key) Key() string {
-	if k.Namespace == "" {
-		return k.Name
-	}
-	return fmt.Sprintf("%s/%s", k.Namespace, k.Name)
-}
-
-func (k *Key) TranslationName() string {
-	return fmt.Sprintf("%s.%s.%s", strings.ToLower(k.Kind), TranslationVersion, k.Name)
-}
