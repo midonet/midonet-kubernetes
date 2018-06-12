@@ -16,11 +16,14 @@
 package hostresolver
 
 import (
+	"fmt"
+
 	log "github.com/sirupsen/logrus"
 
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/record"
 
 	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
@@ -28,16 +31,18 @@ import (
 
 type Handler struct {
 	kc       *kubernetes.Clientset
-	config   *midonet.Config
 	resolver *midonet.HostResolver
+	recorder record.EventRecorder
+	config   *midonet.Config
 }
 
-func newHandler(kc *kubernetes.Clientset, config *midonet.Config) *Handler {
+func newHandler(kc *kubernetes.Clientset, recorder record.EventRecorder, config *midonet.Config) *Handler {
 	client := midonet.NewClient(config)
 	resolver := midonet.NewHostResolver(client)
 	return &Handler{
 		kc:       kc,
 		resolver: resolver,
+		recorder: recorder,
 		config:   config,
 	}
 }
@@ -65,7 +70,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	if err != nil {
 		return err
 	}
-	clog.WithField("host-id", id).Info("Annotated")
+	h.recorder.Event(n, v1.EventTypeNormal, "MidoNetHostIDAnnotated", fmt.Sprintf("Annotated with MidoNet Host ID %s", id.String()))
 	return nil
 }
 
