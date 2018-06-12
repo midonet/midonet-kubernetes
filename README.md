@@ -113,7 +113,7 @@ on the router to provide external connectivity to Pods.
 
 We use [GerritHub][gerrithub] to submit patches.
 
-[gerrithub]: https://review.gerrithub.io/#/q/project:midonet/midonet-kubernetes
+[gerrithub]: https://review.gerrithub.io/q/project:midonet%252Fmidonet-kubernetes
 
 We don't use GitHub pull requests.
 
@@ -121,7 +121,7 @@ We don't use GitHub pull requests.
 
 Everyone is enouraged to review [patches for this repository][patches to review].
 
-[patches to review]: https://review.gerrithub.io/#/q/project:midonet/midonet-kubernetes+status:open
+[patches to review]: https://review.gerrithub.io/q/project:midonet%252Fmidonet-kubernetes+status:open
 
 If you want to be notified of patches, you can add this repository to
 ["Watched Projects"][watched projects] in your GerritHub settings.
