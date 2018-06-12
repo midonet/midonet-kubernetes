@@ -18,9 +18,11 @@ package pusher
 import (
 	log "github.com/sirupsen/logrus"
 
+	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/tools/record"
 
-	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	mnv1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
@@ -28,22 +30,24 @@ import (
 )
 
 type Handler struct {
-	mncli  *mncli.Clientset
-	client *midonet.Client
-	config *midonet.Config
+	mncli    *mncli.Clientset
+	client   *midonet.Client
+	recorder record.EventRecorder
+	config   *midonet.Config
 }
 
-func newHandler(mc *mncli.Clientset, config *midonet.Config) *Handler {
+func newHandler(mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *Handler {
 	client := midonet.NewClient(config)
 	return &Handler{
-		mncli:  mc,
-		client: client,
-		config: config,
+		mncli:    mc,
+		client:   client,
+		recorder: recorder,
+		config:   config,
 	}
 }
 
 func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
-	tr := obj.(*v1.Translation)
+	tr := obj.(*mnv1.Translation)
 	clog := log.WithFields(log.Fields{
 		"key": key,
 	})
@@ -61,14 +65,14 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 		if err != nil {
 			return err
 		}
-		clog.Info("Translation Update pushed to the backend")
+		h.recorder.Event(tr, v1.EventTypeNormal, "TranslationUpdatePushed", "Translation Update pushed to the backend")
 	} else {
 		clog.Debug("Handling Translation Deletion")
 		err := h.client.Delete(resources)
 		if err != nil {
 			return err
 		}
-		clog.Info("Translation Deletion pushed to the backend")
+		h.recorder.Event(tr, v1.EventTypeNormal, "TranslationDeletionPushed", "Translation Deletion pushed to the backend")
 		err = h.clearFinalizer(tr)
 		if err != nil {
 			return err
@@ -78,7 +82,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	return nil
 }
 
-func (h *Handler) clearFinalizer(tr *v1.Translation) error {
+func (h *Handler) clearFinalizer(tr *mnv1.Translation) error {
 	ns := tr.ObjectMeta.Namespace
 	new := tr.DeepCopy()
 	finalizers, removed := util.RemoveFirst(new.ObjectMeta.Finalizers, converter.MidoNetAPIDeleter)
