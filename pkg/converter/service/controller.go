@@ -19,6 +19,7 @@ import (
 	"k8s.io/api/core/v1"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/record"
 
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 	mninformers "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions"
@@ -27,7 +28,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, config *midonet.Config) *controller.Controller {
+func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Services().Informer()
 	updater := converter.NewTranslationUpdater(mc)
 	handler := converter.NewHandler(newServiceConverter(), updater, config)
