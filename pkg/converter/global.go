@@ -82,6 +82,6 @@ func GlobalResources(config *midonet.Config) map[Key]([]BackendResource) {
 
 func EnsureGlobalResources(mncli mncli.Interface, config *midonet.Config, recorder record.EventRecorder) error {
 	resources := GlobalResources(config)
-	updater := NewTranslationUpdater(mncli)
+	updater := NewTranslationUpdater(mncli, recorder)
 	return updater.Update(schema.GroupVersionKind{}, nil, resources)
 }

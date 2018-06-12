@@ -25,29 +25,41 @@ import (
 	jsonpatch "github.com/evanphx/json-patch"
 	log "github.com/sirupsen/logrus"
 
+	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/tools/record"
 
-	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
+	mnv1 "github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 )
 
 type TranslationUpdater struct {
-	client mncli.Interface
+	client   mncli.Interface
+	recorder record.EventRecorder
 }
 
-func NewTranslationUpdater(client mncli.Interface) *TranslationUpdater {
+func NewTranslationUpdater(client mncli.Interface, recorder record.EventRecorder) *TranslationUpdater {
 	return &TranslationUpdater{
-		client: client,
+		client:   client,
+		recorder: recorder,
 	}
 }
 
-func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[Key][]BackendResource) error {
+func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObjInterface interface{}, resources map[Key][]BackendResource) error {
+	var parentObj runtime.Object
+	// REVISIT: Make the caller pass runtime.Object
+	if parentObjInterface != nil {
+		parentObj = parentObjInterface.(runtime.Object)
+	} else {
+		parentObj = nil
+	}
 	var owners []metav1.OwnerReference
 	var ownerlabels map[string]string
 	var requirement *labels.Requirement
@@ -94,17 +106,17 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	for k, res := range resources {
 		name := k.TranslationName()
 		name = makeDNS(name)
-		uid, err := u.updateOne(ns, name, owners, ownerlabels, finalizers, res)
+		uid, err := u.updateOne(parentObj, ns, name, owners, ownerlabels, finalizers, res)
 		if err != nil {
 			return err
 		}
 		uids = append(uids, uid)
 	}
 	// Remove stale translations
-	return u.deleteTranslations(requirement, uids)
+	return u.deleteTranslations(parentObj, requirement, uids)
 }
 
-func (u *TranslationUpdater) deleteTranslations(req *labels.Requirement, keepUIDs []types.UID) error {
+func (u *TranslationUpdater) deleteTranslations(parentObj runtime.Object, req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
 	// but it might be tricky to avoid races with ourselves:
@@ -131,31 +143,35 @@ func (u *TranslationUpdater) deleteTranslations(req *labels.Requirement, keepUID
 		if err != nil {
 			return err
 		}
+		if parentObj != nil {
+			u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationDeleted", "Translation %s/%s Deleted", tr.ObjectMeta.Namespace, tr.ObjectMeta.Name)
+		} else {
+			log.WithFields(log.Fields{
+				"namespace": tr.ObjectMeta.Namespace,
+				"name":      tr.ObjectMeta.Name,
+			}).Info("Global Translation Deleted")
+		}
 	next:
 	}
 	return nil
 }
 
-func (u *TranslationUpdater) deleteTranslation(tr v1.Translation) error {
+func (u *TranslationUpdater) deleteTranslation(tr mnv1.Translation) error {
 	namespace := tr.ObjectMeta.Namespace
 	name := tr.ObjectMeta.Name
 	err := u.client.MidonetV1().Translations(namespace).Delete(name, &metav1.DeleteOptions{})
 	if err != nil {
 		return err
 	}
-	log.WithFields(log.Fields{
-		"namespace": namespace,
-		"name":      name,
-	}).Info("Deleted CR")
 	return nil
 }
 
-func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
+func (u *TranslationUpdater) updateOne(parentObj runtime.Object, ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
 	clog := log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
 	})
-	var v1rs []v1.BackendResource
+	var v1rs []mnv1.BackendResource
 	for _, res := range resources {
 		r, err := ToAPI(res)
 		if err != nil {
@@ -163,7 +179,7 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 		}
 		v1rs = append(v1rs, *r)
 	}
-	obj := &v1.Translation{
+	obj := &mnv1.Translation{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 		},
@@ -180,10 +196,14 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 	clog = clog.WithField("obj", obj)
 	newObj, err := u.client.MidonetV1().Translations(ns).Create(obj)
 	if err == nil {
-		log.WithFields(log.Fields{
-			"namespace": ns,
-			"name":      name,
-		}).Info("Created Translation")
+		if parentObj != nil {
+			u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationCreated", "Translation %s/%s Created", ns, name)
+		} else {
+			log.WithFields(log.Fields{
+				"namespace": ns,
+				"name":      name,
+			}).Info("Global Translation Created")
+		}
 		return newObj.ObjectMeta.UID, nil
 	}
 	if !errors.IsAlreadyExists(err) {
@@ -228,7 +248,15 @@ func (u *TranslationUpdater) updateOne(ns, name string, owners []metav1.OwnerRef
 		"namespace": ns,
 		"name":      name,
 		"patch":     string(patchBytes),
-	}).Info("Patched Translation")
+	}).Debug("Patched Translation")
+	if parentObj != nil {
+		u.recorder.Eventf(parentObj, v1.EventTypeNormal, "TranslationUpdated", "Translation %s/%s Updated", ns, name)
+	} else {
+		log.WithFields(log.Fields{
+			"namespace": ns,
+			"name":      name,
+		}).Info("Global Translation Updated")
+	}
 	return newObj.ObjectMeta.UID, nil
 }
 

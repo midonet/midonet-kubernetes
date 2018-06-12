@@ -31,7 +31,7 @@ import (
 func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Endpoints().Informer()
 	svcInformer := si.Core().V1().Services().Informer()
-	updater := converter.NewTranslationUpdater(mc)
+	updater := converter.NewTranslationUpdater(mc, recorder)
 	handler := converter.NewHandler(newEndpointsConverter(svcInformer), updater, config)
 	gvk := v1.SchemeGroupVersion.WithKind("Endpoints")
 	c := controller.NewController(gvk, informer, handler)
