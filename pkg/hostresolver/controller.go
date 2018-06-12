@@ -29,7 +29,7 @@ import (
 
 func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Nodes().Informer()
-	handler := newHandler(kc, config)
+	handler := newHandler(kc, recorder, config)
 	gvk := v1.SchemeGroupVersion.WithKind("Node")
 	return controller.NewController(gvk, informer, handler)
 }
