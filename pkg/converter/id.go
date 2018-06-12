@@ -42,7 +42,7 @@ func idForString(spaceStr string, key string) uuid.UUID {
 	if err != nil {
 		log.WithError(err).Fatal("space")
 	}
-	return uuid.NewSHA1(space, []byte(key))
+	return uuid.NewSHA1(space, []byte(fmt.Sprintf("%s/%s", TranslationVersion, key)))
 }
 
 func IDForTenant(tenant string) uuid.UUID {
