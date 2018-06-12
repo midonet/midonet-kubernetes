@@ -252,6 +252,7 @@ func (u *TranslationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 		}).Debug("Skipping no-op update of Translation")
 		return existingObj.ObjectMeta.UID, nil
 	}
+	checkTranslationUpdate(existingObj, desiredObj)
 	log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
@@ -266,6 +267,16 @@ func (u *TranslationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 		}).Info("Global Translation Updated")
 	}
 	return newObj.ObjectMeta.UID, nil
+}
+
+func checkTranslationUpdate(old *mnv1.Translation, new *mnv1.Translation) {
+	clog := log.WithFields(log.Fields{
+		"old": "old",
+		"new": "new",
+	})
+	if len(old.Resources) > len(new.Resources) {
+		clog.Fatal("The list of resources shrinked")
+	}
 }
 
 func makeDNS(name string) string {
