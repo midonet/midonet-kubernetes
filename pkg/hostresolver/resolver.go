@@ -24,6 +24,7 @@ import (
 	"k8s.io/client-go/tools/record"
 
 	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/k8s"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
@@ -68,7 +69,11 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	if err != nil {
 		return err
 	}
-	h.recorder.Eventf(n, v1.EventTypeNormal, "MidoNetHostIDAnnotated", "Annotated with MidoNet Host ID %s", id.String())
+	ref, err := k8s.GetReferenceForEvent(n)
+	if err != nil {
+		return err
+	}
+	h.recorder.Eventf(ref, v1.EventTypeNormal, "MidoNetHostIDAnnotated", "Annotated with MidoNet Host ID %s", id.String())
 	return nil
 }
 
