@@ -52,7 +52,7 @@ func (c *Client) exists(origRes APIResource) (bool, error) {
 	log.WithFields(log.Fields{
 		"resp": resp,
 		"body": res,
-	}).Info("Get result")
+	}).Debug("Get result")
 	if resp.StatusCode/100 == 2 {
 		// REVISIT: we can check the contents
 		return true, nil
