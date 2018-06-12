@@ -19,7 +19,10 @@ import (
 
 	"github.com/projectcalico/libcalico-go/lib/logutils"
 	log "github.com/sirupsen/logrus"
+	"k8s.io/api/core/v1"
 	"k8s.io/client-go/informers"
+	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/tools/record"
 
 	mninformers "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions"
 	"github.com/midonet/midonet-kubernetes/pkg/config"
@@ -64,7 +67,10 @@ func main() {
 
 	midonetCfg := midonet.NewConfigFromEnvConfig(config)
 
-	err = converter.EnsureGlobalResources(mnClientset, midonetCfg)
+	broadcaster := record.NewBroadcaster()
+	recorder := broadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "midonet-kube-controllers"})
+
+	err = converter.EnsureGlobalResources(mnClientset, midonetCfg, recorder)
 	if err != nil {
 		log.WithError(err).Fatal("EnsureGlobalResources")
 	}
@@ -91,7 +97,7 @@ func main() {
 		case "hostresolver":
 			newController = hostresolver.NewController
 		}
-		c := newController(si, msi, k8sClientset, mnClientset, midonetCfg)
+		c := newController(si, msi, k8sClientset, mnClientset, recorder, midonetCfg)
 		controllers = append(controllers, c)
 	}
 

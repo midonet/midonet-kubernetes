@@ -18,6 +18,7 @@ package pusher
 import (
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/record"
 
 	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
@@ -26,7 +27,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, config *midonet.Config) *controller.Controller {
+func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
 	informer := msi.Midonet().V1().Translations().Informer()
 	handler := newHandler(mc, config)
 	gvk := v1.SchemeGroupVersion.WithKind("Translation")
