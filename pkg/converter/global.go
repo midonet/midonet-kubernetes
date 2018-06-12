@@ -21,6 +21,7 @@ import (
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/tools/record"
 )
 
 func ServicesChainID(config *midonet.Config) uuid.UUID {
@@ -79,7 +80,7 @@ func GlobalResources(config *midonet.Config) map[Key]([]BackendResource) {
 	}
 }
 
-func EnsureGlobalResources(mncli mncli.Interface, config *midonet.Config) error {
+func EnsureGlobalResources(mncli mncli.Interface, config *midonet.Config, recorder record.EventRecorder) error {
 	resources := GlobalResources(config)
 	updater := NewTranslationUpdater(mncli)
 	return updater.Update(schema.GroupVersionKind{}, nil, resources)
