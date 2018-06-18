@@ -93,6 +93,11 @@ func (c *Client) Push(resources []APIResource) error {
 				if err != nil {
 					return err
 				}
+				if resp.StatusCode == 409 {
+					// Workaound for UNIQUE_TUNNEL_ZONE_NAME_TYPE issue.
+					// https://midonet.atlassian.net/browse/MNA-1293
+					continue
+				}
 			} else {
 				if res.Path("GET") != "" {
 					exists, err := c.exists(res)
