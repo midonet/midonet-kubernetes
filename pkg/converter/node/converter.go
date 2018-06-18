@@ -71,6 +71,13 @@ func nodeAddresses(nodeKey converter.Key, routerPortID uuid.UUID, nodeIP net.IP,
 	return subs
 }
 
+func getTunnelZoneID(idString string, config *midonet.Config) (uuid.UUID, error) {
+	if idString == "" {
+		return converter.DefaultTunnelZoneID(config), nil
+	}
+	return uuid.Parse(idString)
+}
+
 func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	baseID := IDForKey(key.Key())
 	routerPortMAC := converter.MACForKey(key.Key())
@@ -104,6 +111,22 @@ func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *mido
 		return nil, nil, nil
 	}
 	mainChainID := converter.MainChainID(config)
+	subs := nodeAddresses(key, routerPortID, nodeIP, status.Addresses)
+	tunnelZoneID, err := getTunnelZoneID(meta.Annotations[converter.TunnelZoneIDAnnotation], config)
+	if err == nil {
+		tunnelEndpointIP := net.ParseIP(meta.Annotations[converter.TunnelEndpointIPAnnotation])
+		if tunnelEndpointIP != nil {
+			k := converter.Key{
+				Kind: "Node-Tunnel-Endpoint",
+				Name: fmt.Sprintf("%s/%s/%s/%s", key.Name, tunnelEndpointIP, tunnelZoneID, hostID),
+			}
+			subs[k] = &nodeTunnelEndpoint{
+				tunnelZoneID:     tunnelZoneID,
+				tunnelEndpointIP: tunnelEndpointIP,
+				hostID:           hostID,
+			}
+		}
+	}
 	return []converter.BackendResource{
 		&midonet.Bridge{
 			ID:              &bridgeID,
@@ -188,5 +211,5 @@ func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *mido
 			},
 			FlowAction: "continue",
 		},
-	}, nodeAddresses(key, routerPortID, nodeIP, status.Addresses), nil
+	}, subs, nil
 }
