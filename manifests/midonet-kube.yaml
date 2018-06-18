@@ -59,11 +59,6 @@ spec:
                 secretKeyRef:
                   name: midonet-kube-credential
                   key: midonet.project
-            - name: MIDONETKUBE_CLUSTER_ROUTER
-              valueFrom:
-                configMapKeyRef:
-                  name: midonet-kube-config
-                  key: midonet.router
             - name: KUBERNETES_SERVICE_HOST
               valueFrom:
                 configMapKeyRef:
