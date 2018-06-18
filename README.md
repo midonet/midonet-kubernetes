@@ -75,7 +75,8 @@ But something similar should apply to other deployment methods as well.
 </pre>
 2. Remove kube-proxy.
    (It isn't necessary or compatible with this integration.
-   Unfortunately, kubeadm unconditionally sets it up.)
+   Unfortunately, kubeadm unconditionally sets it up.
+   cf. [kubeadm issue 776][kubeadm-776])
 <pre>
 	% kubectl -n kube-system delete ds kube-proxy
 </pre>
@@ -99,6 +100,7 @@ But something similar should apply to other deployment methods as well.
 6. "Untaint" the master node if you want.
 7. If you have workers, do "kubeadm join" as usual.
 
+[kubeadm-776]: https://github.com/kubernetes/kubeadm/issues/776
 [manifests]: ./manifests
 
 ## Contribution
