@@ -22,5 +22,5 @@ const (
 	// and create them with different IDs.  While it would cause severe
 	// user traffic interruptions for a while, it can be useful when
 	// upgrading the controller with incompatible Translations.
-	TranslationVersion = "2"
+	TranslationVersion = "3"
 )

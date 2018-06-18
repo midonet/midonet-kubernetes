@@ -70,7 +70,7 @@ func (_ *serviceConverter) Convert(key converter.Key, obj interface{}, config *m
 		// as it would remove rules in the chain.  (Those rules are
 		// managed by a separate "endpoints" controller.)
 		k := converter.Key{
-			Kind: "Service", // REVISIT: use a dedicated kind
+			Kind: "Service-Port",
 			Name: fmt.Sprintf("%s/%s/%d/%d", portKey, svcIP, proto, port),
 		}
 		subs[k] = &servicePort{portKey, svcIP, proto, port}

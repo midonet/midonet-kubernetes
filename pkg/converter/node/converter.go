@@ -59,7 +59,7 @@ func nodeAddresses(nodeKey converter.Key, routerPortID uuid.UUID, nodeIP net.IP,
 			}).Fatal("Unparsable Node Address")
 		}
 		key := converter.Key{
-			Kind: "Node", // REVISIT: use a dedicated kind
+			Kind: "Node-Address",
 			Name: fmt.Sprintf("%s/%s/%s", nodeKey.Name, typ, ip),
 		}
 		subs[key] = &nodeAddress{

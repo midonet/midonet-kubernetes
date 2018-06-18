@@ -81,7 +81,7 @@ func (c *endpointsConverter) Convert(key converter.Key, obj interface{}, config 
 			// MidoNet side.  Note that MidoNet Chains and Rules are not
 			// updateable.
 			epKey := converter.Key{
-				Kind: "Endpoints", // REVISIT: use a dedicated kind
+				Kind: "Endpoints-Port",
 				Name: fmt.Sprintf("%s/%s/%s/%s/%d/%s", key.Name, ep.portName, svcIP, ep.ip, ep.port, ep.protocol),
 			}
 			subs[epKey] = &ep
