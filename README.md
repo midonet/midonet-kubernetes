@@ -68,21 +68,18 @@ But something similar should apply to other deployment methods as well.
      Kubernetes Node names are same for each nodes. It's usually the case
      because both of them are inferred from the hostname.
 
-1. Create a MidoNet logical router.
-   See the "Cluster router" section below.
-   Record its UUID for the later use.
-2. "kubeadm init" with Node IPAM enabled.
+1. "kubeadm init" with Node IPAM enabled.
    (This integration relies on Node's spec.PodCIDR.)
 <pre>
 	% kubeadm init --pod-network-cidr=10.1.0.0/16
 </pre>
-3. Remove kube-proxy.
+2. Remove kube-proxy.
    (It isn't necessary or compatible with this integration.
    Unfortunately, kubeadm unconditionally sets it up.)
 <pre>
 	% kubectl -n kube-system delete ds kube-proxy
 </pre>
-4. After stopping kube-proxy, you might need to remove iptables rules
+3. After stopping kube-proxy, you might need to remove iptables rules
    installed by kube-proxy manually.
    Note: the following commands would remove many of relevant rules but
    leave some of rules and chains installed by kube-proxy. The simplest
@@ -91,31 +88,18 @@ But something similar should apply to other deployment methods as well.
 	% sudo iptables -t nat -F KUBE-SERVICES
 	% sudo iptables -F KUBE-SERVICES
 </pre>
-5. Look at [manifests][manifests] directory in this repository.
+4. Look at [manifests][manifests] directory in this repository.
    Copy and edit midonet-kube-config.template.yaml to match your deployment.
-   Use the above mentioned MidoNet router UUID here.
    The modified file will be called midonet-kube-config.yaml hereafter.
-6. Apply manifests.
+5. Apply manifests.
 <pre>
 	% kubectl apply -f midonet-kube-config.yaml
 	% kubectl apply -f midonet-kube.yaml
 </pre>
-7. "Untaint" the master node if you want.
-8. If you have workers, do "kubeadm join" as usual.
+6. "Untaint" the master node if you want.
+7. If you have workers, do "kubeadm join" as usual.
 
 [manifests]: ./manifests
-
-## Cluster router
-
-This integration uses a deployment global MidoNet logical router.
-We call it the cluster router.
-A deployer should create it manually.
-
-### External connectivity
-
-The cluster router is used as the default gateway for every Pods
-in the deployment. You can manually configure extra routes and ports
-on the router to provide external connectivity to Pods.
 
 ## Contribution
 
