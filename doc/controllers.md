@@ -48,4 +48,7 @@ This controller adds "midonet.org/host-id" annotation to Kubernetes
 Node resources, by querying MidoNet API with the assumption that
 MidoNet Host name and Kubernetes Node name on a node match.
 
+This controller also adds "midonet.org/tunnel-zone-id" and
+"midonet.org/tunnel-endpoint-ip" annotations.
+
 The annotation is used by pod and node controllers.

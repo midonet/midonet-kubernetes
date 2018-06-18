@@ -67,6 +67,9 @@ But something similar should apply to other deployment methods as well.
    * The following instruction assumes that MidoNet Host names and
      Kubernetes Node names are same for each nodes. It's usually the case
      because both of them are inferred from the hostname.
+   * No need to create a tunnel zone.  The integration will create its own
+	 automatically.
+   * Some of these assumptions can be overridden with manual [annotations][annotations].
 
 1. "kubeadm init" with Node IPAM enabled.
    (This integration relies on Node's spec.PodCIDR.)
@@ -100,6 +103,7 @@ But something similar should apply to other deployment methods as well.
 6. "Untaint" the master node if you want.
 7. If you have workers, do "kubeadm join" as usual.
 
+[annotations]: ./doc/labels-annotations.md#annotations
 [kubeadm-776]: https://github.com/kubernetes/kubeadm/issues/776
 [manifests]: ./manifests
 

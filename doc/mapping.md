@@ -42,6 +42,7 @@ For a given Kubernetes deployment, this controller automatically
 creates the following MidoNet API objects.  They doesn't have
 particular Kubernetes counterparts.
 
+- A tunnel zone
 - A deployment global Router (we call this the cluster router)
 - Chains and Rules shared among all Bridges.
 
@@ -61,6 +62,9 @@ the following MidoNet REST API objects.
 
 Besides, it would create MidoNet Route objects on the cluster router,
 to every addresses on the Node, either ExternalIP or InternalIP,
+
+Also, it adds the node to the MidoNet tunnel zone, using Node's
+first InternalIP as the tunnel endpoint.
 
 Kubernetes Pod
 --------------
