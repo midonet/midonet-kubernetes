@@ -35,14 +35,6 @@ Resource mapping between Kubernetes and MidoNet
                          +--+---------------+
 </pre>
 
-Prerequisite MidoNet resources for a deployemnt
------------------------------------------------
-
-For a given Kubernetes deployment, a deployer should create
-the following MidoNet API objects beforehand:
-
-- A Router (we call this the cluster router)
-
 Global resources
 ----------------
 
@@ -50,6 +42,7 @@ For a given Kubernetes deployment, this controller automatically
 creates the following MidoNet API objects.  They doesn't have
 particular Kubernetes counterparts.
 
+- A deployment global Router (we call this the cluster router)
 - Chains and Rules shared among all Bridges.
 
 Kubernetes Node
