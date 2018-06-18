@@ -16,9 +16,6 @@
 package midonet
 
 import (
-	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
-
 	"github.com/midonet/midonet-kubernetes/pkg/config"
 )
 
@@ -32,22 +29,16 @@ type Config struct {
 	project  string
 
 	// Converter
-	ClusterRouter uuid.UUID
 	Tenant        string
 }
 
 func NewConfigFromEnvConfig(config *config.Config) *Config {
-	router, err := uuid.Parse(config.ClusterRouter)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to parse cluster router")
-	}
 	return &Config{
 		api:      config.MidoNetAPI,
 		username: config.MidoNetUserName,
 		password: config.MidoNetPassword,
 		project:  config.MidoNetProject,
 
-		ClusterRouter: router,
 		Tenant:        config.Tenant,
 	}
 }

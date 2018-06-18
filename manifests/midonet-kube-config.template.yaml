@@ -19,7 +19,6 @@ data:
   # [kubeadm] MasterConfiguration.api.bindPort
   kubernetes.endpoint.port: "6443"
   midonet.api: http://10.0.0.9:8181/midonet-api
-  midonet.router: 73302be0-4405-4cc6-a276-60b4cee1f5b9
 ---
 apiVersion: v1
 kind: Secret
