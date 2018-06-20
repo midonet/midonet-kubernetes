@@ -24,26 +24,26 @@ import (
 	"k8s.io/client-go/tools/record"
 )
 
-func ServicesChainID(config *midonet.Config) uuid.UUID {
+func ServicesChainID(config *Config) uuid.UUID {
 	baseID := IDForTenant(config.Tenant)
 	return SubID(baseID, "Services Chain")
 }
 
-func MainChainID(config *midonet.Config) uuid.UUID {
+func MainChainID(config *Config) uuid.UUID {
 	return IDForTenant(config.Tenant)
 }
 
-func ClusterRouterID(config *midonet.Config) uuid.UUID {
+func ClusterRouterID(config *Config) uuid.UUID {
 	baseID := IDForTenant(config.Tenant)
 	return SubID(baseID, "Cluster Router")
 }
 
-func DefaultTunnelZoneID(config *midonet.Config) uuid.UUID {
+func DefaultTunnelZoneID(config *Config) uuid.UUID {
 	baseID := IDForTenant(config.Tenant)
 	return SubID(baseID, "Default Tunnel Zone")
 }
 
-func GlobalResources(config *midonet.Config) map[Key]([]BackendResource) {
+func GlobalResources(config *Config) map[Key]([]BackendResource) {
 	tenant := config.Tenant
 	baseID := IDForTenant(tenant)
 	mainChainID := baseID
@@ -107,7 +107,7 @@ func GlobalResources(config *midonet.Config) map[Key]([]BackendResource) {
 	}
 }
 
-func EnsureGlobalResources(mncli mncli.Interface, config *midonet.Config, recorder record.EventRecorder) error {
+func EnsureGlobalResources(mncli mncli.Interface, config *Config, recorder record.EventRecorder) error {
 	resources := GlobalResources(config)
 	updater := NewTranslationUpdater(mncli, recorder)
 	return updater.Update(schema.GroupVersionKind{}, nil, resources)

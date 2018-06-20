@@ -68,6 +68,7 @@ func main() {
 		log.WithError(err).Fatal("Failed to start")
 	}
 
+	converterCfg := converter.NewConfigFromEnvConfig(config)
 	midonetCfg := midonet.NewConfigFromEnvConfig(config)
 
 	mnscheme.AddToScheme(scheme.Scheme)
@@ -79,7 +80,7 @@ func main() {
 	})
 	broadcaster.StartRecordingToSink(&v1core.EventSinkImpl{Interface: k8sClientset.CoreV1().Events("")})
 
-	err = converter.EnsureGlobalResources(mnClientset, midonetCfg, recorder)
+	err = converter.EnsureGlobalResources(mnClientset, converterCfg, recorder)
 	if err != nil {
 		log.WithError(err).Fatal("EnsureGlobalResources")
 	}
@@ -106,7 +107,7 @@ func main() {
 		case "nodeannotator":
 			newController = nodeannotator.NewController
 		}
-		c := newController(si, msi, k8sClientset, mnClientset, recorder, midonetCfg)
+		c := newController(si, msi, k8sClientset, mnClientset, recorder, converterCfg, midonetCfg)
 		controllers = append(controllers, c)
 	}
 

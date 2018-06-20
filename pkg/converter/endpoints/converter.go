@@ -22,7 +22,6 @@ import (
 	"k8s.io/client-go/tools/cache"
 
 	"github.com/midonet/midonet-kubernetes/pkg/converter"
-	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 type endpointsConverter struct {
@@ -55,7 +54,7 @@ func endpoints(key string, svcIP string, subsets []v1.EndpointSubset) map[string
 	return m
 }
 
-func (c *endpointsConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+func (c *endpointsConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	resources := make([]converter.BackendResource, 0)
 	subs := make(converter.SubResourceMap)
 	svcObj, exists, err := c.svcInformer.GetIndexer().GetByKey(key.Key())

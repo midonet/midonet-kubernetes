@@ -24,10 +24,11 @@ import (
 	mncli "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 	mninformers "github.com/midonet/midonet-kubernetes/pkg/client/informers/externalversions"
 	"github.com/midonet/midonet-kubernetes/pkg/controller"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
+func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, _ *converter.Config, config *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Nodes().Informer()
 	handler := newHandler(kc, recorder, config)
 	gvk := v1.SchemeGroupVersion.WithKind("Node")

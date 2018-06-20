@@ -19,15 +19,13 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
-
-	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 // SubResource is a pseudo resource to represent a part of a k8s resource.
 // For example, we represent a k8s service as a set of "ServicePort"
 // sub resources.
 type SubResource interface {
-	Convert(key Key, config *midonet.Config) ([]BackendResource, error)
+	Convert(key Key, config *Config) ([]BackendResource, error)
 }
 
 type SubResourceMap map[Key]SubResource
@@ -41,10 +39,10 @@ type Updater interface {
 type Handler struct {
 	converter Converter
 	updater   Updater
-	config    *midonet.Config
+	config    *Config
 }
 
-func NewHandler(converter Converter, updater Updater, config *midonet.Config) *Handler {
+func NewHandler(converter Converter, updater Updater, config *Config) *Handler {
 	return &Handler{
 		converter: converter,
 		updater:   updater,

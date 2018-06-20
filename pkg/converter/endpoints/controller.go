@@ -28,7 +28,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *controller.Controller {
+func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *converter.Config, _ *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Endpoints().Informer()
 	svcInformer := si.Core().V1().Services().Informer()
 	updater := converter.NewTranslationUpdater(mc, recorder)

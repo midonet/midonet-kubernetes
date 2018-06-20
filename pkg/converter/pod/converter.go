@@ -39,7 +39,7 @@ func newPodConverter(nodeInformer cache.SharedIndexInformer) converter.Converter
 	return &podConverter{nodeInformer}
 }
 
-func (c *podConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+func (c *podConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	clog := log.WithField("key", key)
 	baseID := IDForKey(key.Key())
 	bridgePortID := baseID

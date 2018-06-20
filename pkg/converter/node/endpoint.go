@@ -30,7 +30,7 @@ type nodeTunnelEndpoint struct {
 	hostID           uuid.UUID
 }
 
-func (i *nodeTunnelEndpoint) Convert(key converter.Key, config *midonet.Config) ([]converter.BackendResource, error) {
+func (i *nodeTunnelEndpoint) Convert(key converter.Key, config *converter.Config) ([]converter.BackendResource, error) {
 	return []converter.BackendResource{
 		&midonet.TunnelZoneHost{
 			Parent:    midonet.Parent{ID: &i.tunnelZoneID},

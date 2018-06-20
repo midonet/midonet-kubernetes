@@ -71,14 +71,14 @@ func nodeAddresses(nodeKey converter.Key, routerPortID uuid.UUID, nodeIP net.IP,
 	return subs
 }
 
-func getTunnelZoneID(idString string, config *midonet.Config) (uuid.UUID, error) {
+func getTunnelZoneID(idString string, config *converter.Config) (uuid.UUID, error) {
 	if idString == "" {
 		return converter.DefaultTunnelZoneID(config), nil
 	}
 	return uuid.Parse(idString)
 }
 
-func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *midonet.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	baseID := IDForKey(key.Key())
 	routerPortMAC := converter.MACForKey(key.Key())
 	routerID := converter.ClusterRouterID(config)

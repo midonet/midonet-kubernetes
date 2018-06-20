@@ -30,7 +30,7 @@ type nodeAddress struct {
 	ip           net.IP
 }
 
-func (i *nodeAddress) Convert(key converter.Key, config *midonet.Config) ([]converter.BackendResource, error) {
+func (i *nodeAddress) Convert(key converter.Key, config *converter.Config) ([]converter.BackendResource, error) {
 	routerID := converter.ClusterRouterID(config)
 	routeID := converter.IDForKey("Node Address", key.Key())
 	return []converter.BackendResource{

@@ -39,7 +39,7 @@ func (ep *endpoint) portKey() string {
 	return fmt.Sprintf("%s/%s", ep.endpointsKey, ep.portName)
 }
 
-func (ep *endpoint) Convert(epKey converter.Key, config *midonet.Config) ([]converter.BackendResource, error) {
+func (ep *endpoint) Convert(epKey converter.Key, config *converter.Config) ([]converter.BackendResource, error) {
 	// REVISIT: An assumption here is that, if ServicePort.Name is empty,
 	// the corresponding EndpointPort.Name is also empty.  It isn't clear
 	// to me (yamamoto) from the documentation.

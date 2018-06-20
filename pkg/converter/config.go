@@ -13,24 +13,18 @@
 //    License for the specific language governing permissions and limitations
 //    under the License.
 
-package midonet
+package converter
 
 import (
 	"github.com/midonet/midonet-kubernetes/pkg/config"
 )
 
 type Config struct {
-	api      string
-	username string
-	password string
-	project  string
+	Tenant string
 }
 
 func NewConfigFromEnvConfig(config *config.Config) *Config {
 	return &Config{
-		api:      config.MidoNetAPI,
-		username: config.MidoNetUserName,
-		password: config.MidoNetPassword,
-		project:  config.MidoNetProject,
+		Tenant: config.Tenant,
 	}
 }

@@ -17,7 +17,6 @@ package converter
 
 import (
 	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
-	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 // backend resources converted from k8s resources
@@ -31,5 +30,5 @@ func ToAPI(r BackendResource) (*v1.BackendResource, error) {
 }
 
 type Converter interface {
-	Convert(key Key, obj interface{}, config *midonet.Config) ([]BackendResource, SubResourceMap, error)
+	Convert(key Key, obj interface{}, config *Config) ([]BackendResource, SubResourceMap, error)
 }
