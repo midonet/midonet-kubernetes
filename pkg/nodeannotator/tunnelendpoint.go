@@ -22,12 +22,9 @@ import (
 	"k8s.io/api/core/v1"
 
 	log "github.com/sirupsen/logrus"
-
-	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
 type tunnelEndpointIPAnnotator struct {
-	config *midonet.Config
 }
 
 func (a *tunnelEndpointIPAnnotator) getData(n *v1.Node) (string, error) {
