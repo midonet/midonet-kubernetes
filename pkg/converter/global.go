@@ -57,14 +57,14 @@ func GlobalResources(config *Config) map[Key]([]BackendResource) {
 	revDNATRuleID := SubID(baseID, "Reverse DNAT")
 	kind := "midonet-global"
 	return map[Key]([]BackendResource){
-		Key{Kind: kind, Name: "tunnel-zone"}: []BackendResource{
+		{Kind: kind, Name: "tunnel-zone"}: []BackendResource{
 			&midonet.TunnelZone{
 				ID:   &tunnelZoneID,
 				Name: "DefaultTunnelZone",
 				Type: "vxlan",
 			},
 		},
-		Key{Kind: kind, Name: "cluster-router"}: []BackendResource{
+		{Kind: kind, Name: "cluster-router"}: []BackendResource{
 			&midonet.Router{
 				ID:       &clusterRouterID,
 				Name:     "ClusterRouter",
@@ -72,7 +72,7 @@ func GlobalResources(config *Config) map[Key]([]BackendResource) {
 			},
 		},
 		// Chains shared among Bridges for Nodes
-		Key{Kind: kind, Name: "chain"}: []BackendResource{
+		{Kind: kind, Name: "chain"}: []BackendResource{
 			&midonet.Chain{
 				ID:       &mainChainID,
 				Name:     "KUBE-MAIN",
