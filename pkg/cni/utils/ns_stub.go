@@ -20,6 +20,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// GetCurrentThreadNetNSPath returns the string to represent the current
+// namespace of the current thread.
 func GetCurrentThreadNetNSPath() string {
 	logrus.Fatal("Stub implementation used")
 	return ""

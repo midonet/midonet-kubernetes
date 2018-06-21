@@ -23,6 +23,9 @@ import (
 	"github.com/google/uuid"
 )
 
+// ParseCIDR is a convenient function to parse a CIDR string.
+// Note: The return type is different from types.ParseCIDR.
+// (types.IPNet vs net.IPNet)
 func ParseCIDR(s string) (*types.IPNet, error) {
 	tmp, err := types.ParseCIDR(s)
 	if err != nil {
@@ -32,6 +35,7 @@ func ParseCIDR(s string) (*types.IPNet, error) {
 	return &ip, nil
 }
 
+// JumpRule is a convenient function to construct rules.
 func JumpRule(id *uuid.UUID, from *uuid.UUID, to *uuid.UUID) *Rule {
 	return &Rule{
 		Parent:      Parent{ID: from},
@@ -43,29 +47,35 @@ func JumpRule(id *uuid.UUID, from *uuid.UUID, to *uuid.UUID) *Rule {
 
 // https://docs.midonet.org/docs/v5.4/en/rest-api/content/resource-models.html
 
+// HasParent represents a resource with a parent.  e.g. Port
 type HasParent interface {
 	GetParent() *uuid.UUID
 	SetParent(*uuid.UUID)
 }
 
+// Parent is used to construct a resource with a parent.  e.g. Port
 type Parent struct {
 	ID *uuid.UUID `json:"-"`
 }
 
+// GetParent returns the parent ID of the resource.
 func (p *Parent) GetParent() *uuid.UUID {
 	return p.ID
 }
 
+// SetParent sets the parent ID of the resource.
 func (p *Parent) SetParent(id *uuid.UUID) {
 	p.ID = id
 }
 
+// PortRange implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/rule-tp-port-range.html
 type PortRange struct {
 	// Can't specify 0 explicitly but it should be ok for our usage
 	Start int `json:"start,omitempty"`
 	End   int `json:"end,omitempty"`
 }
 
+// NATTarget implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/rule-nat-targets.html
 type NATTarget struct {
 	// Can't specify 0 explicitly but it should be ok for our usage
 	AddressFrom string `json:"addressFrom,omitempty"`
@@ -74,7 +84,7 @@ type NATTarget struct {
 	PortTo      int    `json:"portTo,omitempty"`
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/tunnel-zone.html
+// TunnelZone implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/tunnel-zone.html
 type TunnelZone struct {
 	midonetResource
 	ID   *uuid.UUID `json:"id,omitempty"`
@@ -82,7 +92,7 @@ type TunnelZone struct {
 	Type string     `json:"type,omitempty"`
 }
 
-func (_ *TunnelZone) MediaType() string {
+func (*TunnelZone) MediaType() string {
 	return "application/vnd.org.midonet.TunnelZone-v1+json"
 }
 
@@ -97,7 +107,7 @@ func (res *TunnelZone) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/tunnel-zone-host.html
+// TunnelZoneHost implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/tunnel-zone-host.html
 type TunnelZoneHost struct {
 	midonetResource
 	Parent
@@ -105,7 +115,7 @@ type TunnelZoneHost struct {
 	IPAddress string     `json:"ipAddress,omitempty"`
 }
 
-func (_ *TunnelZoneHost) MediaType() string {
+func (*TunnelZoneHost) MediaType() string {
 	return "application/vnd.org.midonet.TunnelZoneHost-v1+json"
 }
 
@@ -120,7 +130,7 @@ func (res *TunnelZoneHost) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/router.html
+// Router implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/router.html
 type Router struct {
 	midonetResource
 	ID               *uuid.UUID `json:"id,omitempty"`
@@ -130,7 +140,7 @@ type Router struct {
 	OutboundFilterID *uuid.UUID `json:"outboundFilterId,omitempty"`
 }
 
-func (_ *Router) MediaType() string {
+func (*Router) MediaType() string {
 	return "application/vnd.org.midonet.Router-v3+json"
 }
 
@@ -145,7 +155,7 @@ func (res *Router) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/bridge.html
+// Bridge implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/bridge.html
 type Bridge struct {
 	midonetResource
 	ID               *uuid.UUID `json:"id,omitempty"`
@@ -155,7 +165,7 @@ type Bridge struct {
 	OutboundFilterID *uuid.UUID `json:"outboundFilterId,omitempty"`
 }
 
-func (_ *Bridge) MediaType() string {
+func (*Bridge) MediaType() string {
 	return "application/vnd.org.midonet.Bridge-v4+json"
 }
 
@@ -170,7 +180,7 @@ func (res *Bridge) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/port.html
+// Port implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/port.html
 type Port struct {
 	midonetResource
 	Parent
@@ -182,7 +192,7 @@ type Port struct {
 	OutboundFilterID *uuid.UUID     `json:"outboundFilterId,omitempty"`
 }
 
-func (_ *Port) MediaType() string {
+func (*Port) MediaType() string {
 	return "application/vnd.org.midonet.Port-v3+json"
 }
 
@@ -204,7 +214,7 @@ func (res *Port) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/port-link.html
+// PortLink implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/port-link.html
 type PortLink struct {
 	midonetResource
 	Parent
@@ -212,7 +222,7 @@ type PortLink struct {
 	PeerID *uuid.UUID `json:"peerId"`
 }
 
-func (_ *PortLink) MediaType() string {
+func (*PortLink) MediaType() string {
 	return "application/vnd.org.midonet.PortLink-v1+json"
 }
 
@@ -225,7 +235,7 @@ func (res *PortLink) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/route.html
+// Route implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/route.html
 type Route struct {
 	midonetResource
 	Parent
@@ -239,7 +249,7 @@ type Route struct {
 	Type             string     `json:"type"`
 }
 
-func (_ *Route) MediaType() string {
+func (*Route) MediaType() string {
 	return "application/vnd.org.midonet.Route-v1+json"
 }
 
@@ -254,7 +264,7 @@ func (res *Route) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/chain.html
+// Chain implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/chain.html
 type Chain struct {
 	midonetResource
 	ID       *uuid.UUID `json:"id,omitempty"`
@@ -262,7 +272,7 @@ type Chain struct {
 	Name     string     `json:"name,omitempty"`
 }
 
-func (_ *Chain) MediaType() string {
+func (*Chain) MediaType() string {
 	return "application/vnd.org.midonet.Chain-v1+json"
 }
 
@@ -277,7 +287,7 @@ func (res *Chain) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/rule.html
+// Rule implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/rule.html
 type Rule struct {
 	midonetResource
 	Parent
@@ -302,7 +312,7 @@ type Rule struct {
 	NATTargets *[]NATTarget `json:"natTargets,omitempty"`
 }
 
-func (_ *Rule) MediaType() string {
+func (*Rule) MediaType() string {
 	return "application/vnd.org.midonet.Rule-v2+json"
 }
 
@@ -317,19 +327,18 @@ func (res *Rule) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/host.html
-
+// Host implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/host.html
 type Host struct {
 	midonetResource
 	ID   *uuid.UUID `json:"id,omitempty"`
 	Name string     `json:"name,omitempty"`
 }
 
-func (_ *Host) CollectionMediaType() string {
+func (*Host) CollectionMediaType() string {
 	return "application/vnd.org.midonet.collection.Host-v3+json"
 }
 
-func (_ *Host) Path(op string) string {
+func (*Host) Path(op string) string {
 	switch op {
 	case "LIST":
 		return "/hosts"
@@ -338,8 +347,7 @@ func (_ *Host) Path(op string) string {
 	}
 }
 
-// https://docs.midonet.org/docs/v5.4/en/rest-api/content/host-interface-port.html
-
+// HostInterfacePort implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/host-interface-port.html
 type HostInterfacePort struct {
 	midonetResource
 	Parent
@@ -348,7 +356,7 @@ type HostInterfacePort struct {
 	InterfaceName string     `json:"interfaceName"`
 }
 
-func (_ *HostInterfacePort) MediaType() string {
+func (*HostInterfacePort) MediaType() string {
 	return "application/vnd.org.midonet.HostInterfacePort-v1+json"
 }
 

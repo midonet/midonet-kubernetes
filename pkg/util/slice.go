@@ -15,6 +15,7 @@
 
 package util
 
+// RemoveFirst removes the first occurrence of the string in the list.
 func RemoveFirst(xs []string, x string) ([]string, bool) {
 	for i, f := range xs {
 		if f == x {

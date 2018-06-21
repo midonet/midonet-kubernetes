@@ -23,7 +23,9 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-// An exported copy of getCurrentThreadNetNSPath
+// GetCurrentThreadNetNSPath returns the string to represent the current
+// namespace of the current thread.
+// This is an exported copy of getCurrentThreadNetNSPath
 // from github.com/containernetworking/plugins/pkg/ns/ns_linux.go
 func GetCurrentThreadNetNSPath() string {
 	// /proc/self/ns/net returns the namespace of the main thread, not

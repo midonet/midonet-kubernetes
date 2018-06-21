@@ -24,28 +24,35 @@ import (
 	"k8s.io/client-go/tools/record"
 )
 
+// ServicesChainID is the ID of MidoNet Chain which contains the Rules
+// for each services.
 func ServicesChainID(config *Config) uuid.UUID {
-	baseID := IDForTenant(config.Tenant)
+	baseID := idForTenant(config.Tenant)
 	return SubID(baseID, "Services Chain")
 }
 
+// MainChainID is the ID of MidoNet Chain which contains the Rules
+// to dispatch to other global Chains including ServicesChainID.
 func MainChainID(config *Config) uuid.UUID {
-	return IDForTenant(config.Tenant)
+	return idForTenant(config.Tenant)
 }
 
+// ClusterRouterID is the ID of the cluster router for this deployment.
 func ClusterRouterID(config *Config) uuid.UUID {
-	baseID := IDForTenant(config.Tenant)
+	baseID := idForTenant(config.Tenant)
 	return SubID(baseID, "Cluster Router")
 }
 
+// DefaultTunnelZoneID is the ID of the default MidoNet Tunnel Zone for
+// this deployment.
 func DefaultTunnelZoneID(config *Config) uuid.UUID {
-	baseID := IDForTenant(config.Tenant)
+	baseID := idForTenant(config.Tenant)
 	return SubID(baseID, "Default Tunnel Zone")
 }
 
-func GlobalResources(config *Config) map[Key]([]BackendResource) {
+func globalResources(config *Config) map[Key]([]BackendResource) {
 	tenant := config.Tenant
-	baseID := IDForTenant(tenant)
+	baseID := idForTenant(tenant)
 	mainChainID := baseID
 	clusterRouterID := ClusterRouterID(config)
 	tunnelZoneID := DefaultTunnelZoneID(config)
@@ -107,8 +114,9 @@ func GlobalResources(config *Config) map[Key]([]BackendResource) {
 	}
 }
 
+// EnsureGlobalResources ensures to create Translations for global resources.
 func EnsureGlobalResources(mncli mncli.Interface, config *Config, recorder record.EventRecorder) error {
-	resources := GlobalResources(config)
+	resources := globalResources(config)
 	updater := NewTranslationUpdater(mncli, recorder)
 	return updater.Update(schema.GroupVersionKind{}, nil, resources)
 }

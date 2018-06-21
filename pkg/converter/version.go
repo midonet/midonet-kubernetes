@@ -16,6 +16,8 @@
 package converter
 
 const (
+	// TranslationVersion is a seed for Translation names and
+	// backend resource IDs.
 	// Changing TranslationVersion changes every Translation names
 	// and backend resource IDs this controller would produce.  That is,
 	// it effectively deletes every Translations and their backend resources

@@ -22,14 +22,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// HostResolver resolves hostname to MidoNet Host ID.
 type HostResolver struct {
 	client *Client
 }
 
+// NewHostResolver creates a HostResolver.
 func NewHostResolver(client *Client) *HostResolver {
 	return &HostResolver{client}
 }
 
+// ResolveHost resolves a hostname to the corresponding MidoNet Host ID.
 func (h *HostResolver) ResolveHost(hostname string) (*uuid.UUID, error) {
 	clog := log.WithField("hostname", hostname)
 	clog.Debug("Start resolving")

@@ -22,13 +22,14 @@ import (
 	"k8s.io/client-go/tools/cache"
 )
 
+// Key is an identifier of a Translation.
 type Key struct {
 	Kind      string
 	Namespace string
 	Name      string
 }
 
-func NewKeyFromClientKey(kind, strKey string) (Key, error) {
+func newKeyFromClientKey(kind, strKey string) (Key, error) {
 	ns, name, err := cache.SplitMetaNamespaceKey(strKey)
 	if err != nil {
 		return Key{}, err
@@ -40,7 +41,7 @@ func NewKeyFromClientKey(kind, strKey string) (Key, error) {
 	}, nil
 }
 
-// Returns MetaNamespaceKeyFunc style key
+// Key returns MetaNamespaceKeyFunc style key for the Key
 func (k *Key) Key() string {
 	if k.Namespace == "" {
 		return k.Name
@@ -48,6 +49,6 @@ func (k *Key) Key() string {
 	return fmt.Sprintf("%s/%s", k.Namespace, k.Name)
 }
 
-func (k *Key) TranslationName() string {
+func (k *Key) translationName() string {
 	return fmt.Sprintf("%s.%s.%s", strings.ToLower(k.Kind), TranslationVersion, k.Name)
 }

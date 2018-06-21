@@ -24,6 +24,8 @@ import (
 	"k8s.io/client-go/tools/reference"
 )
 
+// GetReferenceForEvent returns a reference to the given object,
+// tweaked to be used for events.
 func GetReferenceForEvent(obj runtime.Object) (*v1.ObjectReference, error) {
 	ref, err := reference.GetReference(scheme.Scheme, obj)
 	if err != nil {

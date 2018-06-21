@@ -32,25 +32,25 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-type Annotator interface {
+type annotator interface {
 	getData(*v1.Node) (string, error)
 }
 
-type Handler struct {
+type annotatorHandler struct {
 	kc         *kubernetes.Clientset
 	recorder   record.EventRecorder
 	config     *midonet.Config
-	annotators map[string]Annotator
+	annotators map[string]annotator
 }
 
-func newHandler(kc *kubernetes.Clientset, recorder record.EventRecorder, config *midonet.Config) *Handler {
+func newHandler(kc *kubernetes.Clientset, recorder record.EventRecorder, config *midonet.Config) *annotatorHandler {
 	client := midonet.NewClient(config)
 	resolver := midonet.NewHostResolver(client)
-	return &Handler{
+	return &annotatorHandler{
 		kc:       kc,
 		recorder: recorder,
 		config:   config,
-		annotators: map[string]Annotator{
+		annotators: map[string]annotator{
 			converter.HostIDAnnotation: &hostIDAnnotator{
 				resolver: resolver,
 			},
@@ -60,7 +60,7 @@ func newHandler(kc *kubernetes.Clientset, recorder record.EventRecorder, config 
 	}
 }
 
-func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
+func (h *annotatorHandler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
 	n := obj.(*v1.Node)
 	new := n.DeepCopy()
 	annotations := new.ObjectMeta.Annotations
@@ -111,7 +111,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	return nil
 }
 
-func (h *Handler) Delete(key string) error {
+func (h *annotatorHandler) Delete(key string) error {
 	/* nothing to do */
 	return nil
 }

@@ -19,6 +19,8 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	"k8s.io/apimachinery/pkg/runtime/schema"
+
+	"github.com/midonet/midonet-kubernetes/pkg/controller"
 )
 
 // SubResource is a pseudo resource to represent a part of a k8s resource.
@@ -28,29 +30,33 @@ type SubResource interface {
 	Convert(key Key, config *Config) ([]BackendResource, error)
 }
 
+// SubResourceMap represents zero or more SubResources.
+// It's returned by a Conveter.Convert().
 type SubResourceMap map[Key]SubResource
 
+// Updater stores the converted resources.
 type Updater interface {
 	// NOTE: Pass GVK explicitly as List'ed objects don't have valid
 	// TypeMeta.  https://github.com/kubernetes/kubernetes/issues/3030
 	Update(parentKind schema.GroupVersionKind, parentObj interface{}, resources map[Key][]BackendResource) error
 }
 
-type Handler struct {
+type converterHandler struct {
 	converter Converter
 	updater   Updater
 	config    *Config
 }
 
-func NewHandler(converter Converter, updater Updater, config *Config) *Handler {
-	return &Handler{
+// NewHandler creates a converterHandler.
+func NewHandler(converter Converter, updater Updater, config *Config) controller.Handler {
+	return &converterHandler{
 		converter: converter,
 		updater:   updater,
 		config:    config,
 	}
 }
 
-func (h *Handler) convertSubResources(added SubResourceMap, converted map[Key][]BackendResource, clog *log.Entry) error {
+func (h *converterHandler) convertSubResources(added SubResourceMap, converted map[Key][]BackendResource, clog *log.Entry) error {
 	for k, r := range added {
 		v, err := r.Convert(k, h.config)
 		if err != nil {
@@ -66,8 +72,8 @@ func (h *Handler) convertSubResources(added SubResourceMap, converted map[Key][]
 	return nil
 }
 
-func (h *Handler) Update(strKey string, gvk schema.GroupVersionKind, obj interface{}) error {
-	key, err := NewKeyFromClientKey(gvk.Kind, strKey)
+func (h *converterHandler) Update(strKey string, gvk schema.GroupVersionKind, obj interface{}) error {
+	key, err := newKeyFromClientKey(gvk.Kind, strKey)
 	if err != nil {
 		return err
 	}
@@ -97,7 +103,7 @@ func (h *Handler) Update(strKey string, gvk schema.GroupVersionKind, obj interfa
 	return nil
 }
 
-func (h *Handler) Delete(key string) error {
+func (h *converterHandler) Delete(key string) error {
 	log.WithField("key", key).Debug("Delete")
 	/* nothing to do */
 	return nil

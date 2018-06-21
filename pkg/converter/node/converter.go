@@ -28,12 +28,12 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
-func IDForKey(key string) uuid.UUID {
+func idForKey(key string) uuid.UUID {
 	return converter.IDForKey("Node", key)
 }
 
-func PortIDForKey(key string) uuid.UUID {
-	baseID := IDForKey(key)
+func portIDForKey(key string) uuid.UUID {
+	baseID := idForKey(key)
 	return converter.SubID(baseID, "Node Port")
 }
 
@@ -79,12 +79,12 @@ func getTunnelZoneID(idString string, config *converter.Config) (uuid.UUID, erro
 }
 
 func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
-	baseID := IDForKey(key.Key())
+	baseID := idForKey(key.Key())
 	routerPortMAC := converter.MACForKey(key.Key())
 	routerID := converter.ClusterRouterID(config)
 	bridgeID := baseID
 	bridgePortID := converter.SubID(baseID, "Bridge Port")
-	nodePortID := PortIDForKey(key.Key())
+	nodePortID := portIDForKey(key.Key())
 	nodePortChainID := converter.SubID(baseID, "Node Port Chain")
 	nodeSNATRuleID := converter.SubID(baseID, "Node Port SNAT Rule")
 	routerPortID := converter.SubID(baseID, "Router Port")

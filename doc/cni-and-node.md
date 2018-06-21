@@ -10,4 +10,4 @@ The following is a summary of differences between Pods and Nodes.
 | contNS       | args.Netns (from docker) | host namespace              |
 | contVethName | args.IfName ("eth0")     | fixed ("midokube-node")     |
 | hostVethName | generated from NS/Pod    | fixed ("midokube-mido")     |
-| MidoNet port | pod.IDForKey(podKey)     | node.PortIDForKey(nodename) |
+| MidoNet port | pod.idForKey(podKey)     | node.portIDForKey(nodename) |

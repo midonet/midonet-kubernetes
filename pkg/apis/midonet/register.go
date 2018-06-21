@@ -16,5 +16,6 @@
 package midonet
 
 const (
+	// GroupName is the group name for this package.
 	GroupName = "midonet.org"
 )

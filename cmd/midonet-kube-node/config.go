@@ -18,6 +18,7 @@ import (
 	"github.com/kelseyhightower/envconfig"
 )
 
+// Config is an envconfig definition for midonet-kube-node
 type Config struct {
 	// Minimum log level to emit.
 	LogLevel string `default:"info" split_words:"true"`

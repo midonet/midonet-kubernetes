@@ -238,6 +238,7 @@ func getPodCidr(client *kubernetes.Clientset, conf types.NetConf, podNamespace s
 	return GetNodePodCIDR(client, nodename)
 }
 
+// GetNodePodCIDR queries podCIDR of the node.
 func GetNodePodCIDR(client *kubernetes.Clientset, nodename string) (string, error) {
 	node, err := client.CoreV1().Nodes().Get(nodename, metav1.GetOptions{})
 	if err != nil {

@@ -15,6 +15,8 @@
 
 package midonet
 
+// ListableResource represents a MidoNet API resource which supports
+// GET of the collection.
 type ListableResource interface {
 	Path(string) string
 	CollectionMediaType() string

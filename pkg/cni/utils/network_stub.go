@@ -23,6 +23,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DoNetworking performs the networking for the given config and IPAM result
 func DoNetworking(destNetworks []*net.IPNet, ips []*current.IPConfig, contNetNS, contVethName, hostVethName string, ipForward bool, logger *logrus.Entry) (contVethMAC string, err error) {
 	logrus.Fatal("Stub implementation used")
 	return "", nil

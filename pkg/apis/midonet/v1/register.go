@@ -23,18 +23,22 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet"
 )
 
+// SchemeGroupVersion for this extension
 var SchemeGroupVersion = schema.GroupVersion{
 	Group:   midonet.GroupName,
 	Version: "v1",
 }
 
+// Resource for this extension
 func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }
 
 var (
-	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
-	AddToScheme   = SchemeBuilder.AddToScheme
+	schemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
+
+	// AddToScheme for this extension
+	AddToScheme = schemeBuilder.AddToScheme
 )
 
 func addKnownTypes(scheme *runtime.Scheme) error {

@@ -23,11 +23,13 @@ import (
 	"k8s.io/client-go/util/workqueue"
 )
 
+// Handler is a set of callbacks to process events on the queue.
 type Handler interface {
 	Update(string, schema.GroupVersionKind, interface{}) error
 	Delete(string) error
 }
 
+// Controller describes a controller to watch the given GVK events.
 type Controller struct {
 	informer cache.SharedIndexInformer
 	queue    workqueue.RateLimitingInterface
@@ -35,6 +37,7 @@ type Controller struct {
 	gvk      schema.GroupVersionKind
 }
 
+// NewController creates a controller.
 func NewController(gvk schema.GroupVersionKind, informer cache.SharedIndexInformer, handler Handler) *Controller {
 	queue := AddHandler(informer, gvk.String())
 	return &Controller{
@@ -45,6 +48,7 @@ func NewController(gvk schema.GroupVersionKind, informer cache.SharedIndexInform
 	}
 }
 
+// Run executes the controller.
 func (c *Controller) Run() {
 	for c.processNextItem() {
 	}
@@ -88,6 +92,9 @@ func (c *Controller) processItem(key string, informer cache.SharedIndexInformer)
 	return c.handler.Update(key, c.gvk, obj)
 }
 
+// GetQueue returns the event queue used by the controller.
+// It can be useful to inject extra events for the controller.
+// See pkg/converter/endpoints/controller.go for an example.
 func (c *Controller) GetQueue() workqueue.Interface {
 	return c.queue
 }

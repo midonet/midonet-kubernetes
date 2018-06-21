@@ -45,22 +45,29 @@ func idForString(spaceStr string, key string) uuid.UUID {
 	return uuid.NewSHA1(space, []byte(fmt.Sprintf("%s/%s", TranslationVersion, key)))
 }
 
-func IDForTenant(tenant string) uuid.UUID {
+func idForTenant(tenant string) uuid.UUID {
 	return idForString(midonetTenantSpaceUUIDString, tenant)
 }
 
-// Generate a MidoNet UUID for a given Kubernetes resource key, that is
-// "Namespace/Name" string.
+// IDForKey deterministically generates a MidoNet UUID for a given Kubernetes
+// resource key, that is "Namespace/Name" string.
 // Note: This function is also (ab)used for our pseudo resources;
 // ServicePort, ServicePortSub, and Endpoint.
 func IDForKey(kind string, key string) uuid.UUID {
 	return idForString(kubernetesSpaceUUIDString, fmt.Sprintf("%s/%s", kind, key))
 }
 
+// SubID deterministically generates another MidoNet UUID for the resource
+// identified by the given UUID.  It's used e.g. when more than two MidoNet
+// resources (thus UUIDs) are necessary for a Kubernetes resource.
 func SubID(id uuid.UUID, s string) uuid.UUID {
 	return uuid.NewSHA1(id, []byte(s))
 }
 
+// MACForKey deterministically generates an MAC address from a given string,
+// which is typically a Kubernetes resource key.
+// Note: Don't assume this conflict-free as the output space is rather
+// small. (only 24 bits)
 func MACForKey(key string) net.HardwareAddr {
 	hash := sha256.Sum256([]byte(key))
 	// AC-CA-BA  Midokura Co., Ltd.

@@ -28,11 +28,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Client is a MidoNet API client.
 type Client struct {
 	config *Config
 	token  string
 }
 
+// NewClient creates a Client.
 func NewClient(config *Config) *Client {
 	return &Client{
 		config: config,
@@ -63,6 +65,7 @@ func (c *Client) exists(origRes APIResource) (bool, error) {
 	return false, fmt.Errorf("Unexpected status %d", resp.StatusCode)
 }
 
+// Push creates or updates the given resources on MidoNet API.
 func (c *Client) Push(resources []APIResource) error {
 	for _, res := range resources {
 		// REVISIT: maybe we should save updates (and thus zk and
@@ -127,6 +130,7 @@ func (c *Client) Push(resources []APIResource) error {
 	return nil
 }
 
+// Delete deletes the given resources on MidoNet API.
 func (c *Client) Delete(resources []APIResource) error {
 	for _, res := range resources {
 		resp, body, err := c.doRequest("DELETE", res.Path("DELETE"), nil, "")
@@ -164,6 +168,9 @@ func (c *Client) get(id, result APIResource) (*http.Response, error) {
 	return resp, err
 }
 
+// List gets the list of the given resources on MidoNet API.
+// Note: the argument rs should be a pointer to an empty slice of
+// the struct.  E.g. a pointer to []Host
 func (c *Client) List(rs interface{}) (*http.Response, error) {
 	// assumption: rs is a pointer to an array of ListableResource
 	// E.g. *[]Host

@@ -28,6 +28,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
+// NewController creates a pod controller.
 func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, config *converter.Config, _ *midonet.Config) *controller.Controller {
 	informer := si.Core().V1().Pods().Informer()
 	nodeInformer := si.Core().V1().Nodes().Informer()

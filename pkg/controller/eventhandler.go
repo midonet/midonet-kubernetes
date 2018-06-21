@@ -23,6 +23,8 @@ import (
 	"k8s.io/client-go/util/workqueue"
 )
 
+// AddHandler creates and adds an event handler to the informer.  It returns
+// the queue associated to the event handler.
 func AddHandler(informer cache.SharedIndexInformer, kind string) workqueue.RateLimitingInterface {
 	rateLimiter := workqueue.DefaultControllerRateLimiter()
 	queue := workqueue.NewNamedRateLimitingQueue(rateLimiter, kind)
@@ -31,6 +33,8 @@ func AddHandler(informer cache.SharedIndexInformer, kind string) workqueue.RateL
 	return queue
 }
 
+// NewEventHandler creates an event handler which just adds events to
+// the given queue.
 func NewEventHandler(kind string, queue workqueue.Interface) cache.ResourceEventHandler {
 	handler := cache.ResourceEventHandlerFuncs{
 		AddFunc: func(obj interface{}) {

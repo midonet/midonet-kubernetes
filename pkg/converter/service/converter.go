@@ -31,7 +31,7 @@ func newServiceConverter() converter.Converter {
 	return &serviceConverter{}
 }
 
-func (_ *serviceConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
+func (*serviceConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	resources := make([]converter.BackendResource, 0)
 	subs := make(converter.SubResourceMap)
 	spec := obj.(*v1.Service).Spec

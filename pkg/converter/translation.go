@@ -41,19 +41,20 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/k8s"
 )
 
-type TranslationUpdater struct {
+type translationUpdater struct {
 	client   mncli.Interface
 	recorder record.EventRecorder
 }
 
-func NewTranslationUpdater(client mncli.Interface, recorder record.EventRecorder) *TranslationUpdater {
-	return &TranslationUpdater{
+// NewTranslationUpdater returns an updater to store Translation resources.
+func NewTranslationUpdater(client mncli.Interface, recorder record.EventRecorder) Updater {
+	return &translationUpdater{
 		client:   client,
 		recorder: recorder,
 	}
 }
 
-func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentObjInterface interface{}, resources map[Key][]BackendResource) error {
+func (u *translationUpdater) Update(parentKind schema.GroupVersionKind, parentObjInterface interface{}, resources map[Key][]BackendResource) error {
 	var parentObj runtime.Object
 	var parentRef *v1.ObjectReference
 	// REVISIT: Make the caller pass runtime.Object
@@ -112,7 +113,7 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	finalizers := []string{MidoNetAPIDeleter}
 	var uids []types.UID
 	for k, res := range resources {
-		name := k.TranslationName()
+		name := k.translationName()
 		name = makeDNS(name)
 		uid, err := u.updateOne(parentRef, ns, name, owners, ownerlabels, finalizers, res)
 		if err != nil {
@@ -124,7 +125,7 @@ func (u *TranslationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	return u.deleteTranslations(parentRef, requirement, uids)
 }
 
-func (u *TranslationUpdater) deleteTranslations(parentRef *v1.ObjectReference, req *labels.Requirement, keepUIDs []types.UID) error {
+func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
 	// but it might be tricky to avoid races with ourselves:
@@ -164,7 +165,7 @@ func (u *TranslationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 	return nil
 }
 
-func (u *TranslationUpdater) deleteTranslation(tr mnv1.Translation) error {
+func (u *translationUpdater) deleteTranslation(tr mnv1.Translation) error {
 	namespace := tr.ObjectMeta.Namespace
 	name := tr.ObjectMeta.Name
 	err := u.client.MidonetV1().Translations(namespace).Delete(name, &metav1.DeleteOptions{})
@@ -174,14 +175,14 @@ func (u *TranslationUpdater) deleteTranslation(tr mnv1.Translation) error {
 	return nil
 }
 
-func (u *TranslationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
+func (u *translationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name string, owners []metav1.OwnerReference, labels map[string]string, finalizers []string, resources []BackendResource) (types.UID, error) {
 	clog := log.WithFields(log.Fields{
 		"namespace": ns,
 		"name":      name,
 	})
 	var v1rs []mnv1.BackendResource
 	for _, res := range resources {
-		r, err := ToAPI(res)
+		r, err := toAPI(res)
 		if err != nil {
 			return "", err
 		}

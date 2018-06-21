@@ -25,8 +25,12 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 )
 
+// APIResource represents a MidoNet API resource.
 type APIResource interface {
+	// Path returns the path of the resource.
 	Path(string) string
+
+	// MediaType returns the media type of the resource.
 	MediaType() string
 }
 
@@ -34,7 +38,7 @@ type APIResource interface {
 type midonetResource struct {
 }
 
-func (_ *midonetResource) ToAPI(res interface{}) (*v1.BackendResource, error) {
+func (*midonetResource) ToAPI(res interface{}) (*v1.BackendResource, error) {
 	data, err := json.Marshal(res)
 	if err != nil {
 		log.WithError(err).Error("Marshal")
@@ -51,6 +55,7 @@ func (_ *midonetResource) ToAPI(res interface{}) (*v1.BackendResource, error) {
 	return r, nil
 }
 
+// FromAPI constructs an object from the given BackendResource.
 func FromAPI(res v1.BackendResource) (APIResource, error) {
 	r := ObjectByTypeName(res.Kind).(APIResource)
 	err := json.Unmarshal([]byte(res.Body), r)

@@ -16,5 +16,7 @@
 package converter
 
 const (
+	// MidoNetAPIDeleter is used to defer deletion of Translation
+	// until it's processed by the pusher controller.
 	MidoNetAPIDeleter = "midonet.org/deleter"
 )

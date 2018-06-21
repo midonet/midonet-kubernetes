@@ -16,7 +16,14 @@
 package converter
 
 const (
-	HostIDAnnotation           = "midonet.org/host-id"
-	TunnelZoneIDAnnotation     = "midonet.org/tunnel-zone-id"
+	// HostIDAnnotation annotates MidoNet Host ID for the Node.
+	HostIDAnnotation = "midonet.org/host-id"
+
+	// TunnelZoneIDAnnotation annotates MidoNet Tunnel Zone ID for the Node.
+	// An empty string means the auto-created default tunnel zone.
+	TunnelZoneIDAnnotation = "midonet.org/tunnel-zone-id"
+
+	// TunnelEndpointIPAnnotation annotates MidoNet Tunnel Endpoint IP for
+	// the Node.
 	TunnelEndpointIPAnnotation = "midonet.org/tunnel-endpoint-ip"
 )

@@ -19,10 +19,10 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Translation is an ordered set of BackendResources.
 // +genclient
 // +genclient:noStatus
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 type Translation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -36,8 +36,8 @@ type Translation struct {
 	// RPCs in the normal operations to update the field.
 }
 
+// TranslationList is a list of Translations.
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
 type TranslationList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -45,6 +45,7 @@ type TranslationList struct {
 	Items []Translation
 }
 
+// BackendResource describes a MidoNet API resource.
 type BackendResource struct {
 	Kind   string `json:"kind"`   // "Bridge", "Port", ...
 	Parent string `json:"parent"` // UUID

@@ -29,16 +29,16 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/util"
 )
 
-type Handler struct {
+type pusherHandler struct {
 	mncli    *mncli.Clientset
 	client   *midonet.Client
 	recorder record.EventRecorder
 	config   *midonet.Config
 }
 
-func newHandler(mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *Handler {
+func newHandler(mc *mncli.Clientset, recorder record.EventRecorder, config *midonet.Config) *pusherHandler {
 	client := midonet.NewClient(config)
-	return &Handler{
+	return &pusherHandler{
 		mncli:    mc,
 		client:   client,
 		recorder: recorder,
@@ -46,7 +46,7 @@ func newHandler(mc *mncli.Clientset, recorder record.EventRecorder, config *mido
 	}
 }
 
-func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
+func (h *pusherHandler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
 	tr := obj.(*mnv1.Translation)
 	clog := log.WithFields(log.Fields{
 		"key": key,
@@ -85,7 +85,7 @@ func (h *Handler) Update(key string, gvk schema.GroupVersionKind, obj interface{
 	return nil
 }
 
-func (h *Handler) clearFinalizer(tr *mnv1.Translation) error {
+func (h *pusherHandler) clearFinalizer(tr *mnv1.Translation) error {
 	ns := tr.ObjectMeta.Namespace
 	new := tr.DeepCopy()
 	finalizers, removed := util.RemoveFirst(new.ObjectMeta.Finalizers, converter.MidoNetAPIDeleter)
@@ -98,7 +98,7 @@ func (h *Handler) clearFinalizer(tr *mnv1.Translation) error {
 	return err
 }
 
-func (h *Handler) Delete(key string) error {
+func (h *pusherHandler) Delete(key string) error {
 	/* nothing to do */
 	return nil
 }

@@ -23,7 +23,7 @@ import (
 	midonet "github.com/midonet/midonet-kubernetes/pkg/client/clientset/versioned"
 )
 
-// GetClients builds and returns Kubernetes client.
+// GetClient builds and returns Kubernetes client.
 func GetClient(kubeconfig string) (*kubernetes.Clientset, *midonet.Clientset, error) {
 
 	// Now build the Kubernetes client, we support in-cluster config and kubeconfig

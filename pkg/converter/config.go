@@ -19,10 +19,12 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/config"
 )
 
+// Config contains configuration for converter and its sub packages.
 type Config struct {
 	Tenant string
 }
 
+// NewConfigFromEnvConfig creates Config from envconfig instance.
 func NewConfigFromEnvConfig(config *config.Config) *Config {
 	return &Config{
 		Tenant: config.Tenant,

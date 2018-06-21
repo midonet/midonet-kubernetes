@@ -28,6 +28,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
+// NewController creates a pusher controller.
 func NewController(si informers.SharedInformerFactory, msi mninformers.SharedInformerFactory, kc *kubernetes.Clientset, mc *mncli.Clientset, recorder record.EventRecorder, _ *converter.Config, config *midonet.Config) *controller.Controller {
 	informer := msi.Midonet().V1().Translations().Informer()
 	handler := newHandler(mc, recorder, config)

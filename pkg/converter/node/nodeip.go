@@ -21,12 +21,14 @@ import (
 	"github.com/containernetworking/plugins/pkg/ip"
 )
 
+// SubnetInfo contains the special IP addresses for the Node.
 type SubnetInfo struct {
 	GatewayIP net.IPNet
 	NodeIP    net.IPNet
 	Subnet    net.IPNet
 }
 
+// GetSubnetInfo calculates SubnetInfo from the given podCIDR.
 func GetSubnetInfo(podCIDR string) (*SubnetInfo, error) {
 	// Use the first IP for the gateway.
 	// Use the next one for the IP for the interface to connect the node.

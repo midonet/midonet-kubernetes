@@ -15,6 +15,8 @@
 
 package node
 
+// IFName returns the name of the interface used to connect this Node to
+// the pod network.
 func IFName() string {
 	return "midokube-mido"
 }

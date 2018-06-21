@@ -19,16 +19,17 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/apis/midonet/v1"
 )
 
-// backend resources converted from k8s resources
+// BackendResource represents backend resources converted from k8s resources
 type BackendResource interface {
 	ToAPI(interface{}) (*v1.BackendResource, error)
 }
 
-func ToAPI(r BackendResource) (*v1.BackendResource, error) {
+func toAPI(r BackendResource) (*v1.BackendResource, error) {
 	b, err := r.ToAPI(r)
 	return b, err
 }
 
+// Converter converts a Kubernetes resource to zero or more backend resources.
 type Converter interface {
 	Convert(key Key, obj interface{}, config *Config) ([]BackendResource, SubResourceMap, error)
 }

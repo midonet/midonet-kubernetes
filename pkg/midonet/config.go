@@ -19,6 +19,7 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/config"
 )
 
+// Config contains MidoNet API configuration.
 type Config struct {
 	api      string
 	username string
@@ -26,6 +27,7 @@ type Config struct {
 	project  string
 }
 
+// NewConfigFromEnvConfig creates Config from envconfig instance.
 func NewConfigFromEnvConfig(config *config.Config) *Config {
 	return &Config{
 		api:      config.MidoNetAPI,

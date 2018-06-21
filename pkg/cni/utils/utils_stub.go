@@ -21,6 +21,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// CleanUpNamespace deletes the devices in the network namespace.
 func CleanUpNamespace(args *skel.CmdArgs, logger *logrus.Entry) error {
 	logrus.Fatal("Stub implementation used")
 	return nil

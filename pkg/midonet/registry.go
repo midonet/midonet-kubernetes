@@ -22,6 +22,12 @@ import (
 	reflect2 "github.com/modern-go/reflect2"
 )
 
+// The purpose of the following functions are to manage the struct types in
+// resources.go.  They are not intended to be generic at all.
+// These are merely hacks to avoid having explicit registrations.
+
+// TypeNameForObject returns the type name of the interface.
+// E.g. if midonet.Bridge{} is given, this function returns "Bridge".
 func TypeNameForObject(obj interface{}) string {
 	t := reflect.TypeOf(obj)
 	fullname := t.String()
@@ -29,6 +35,8 @@ func TypeNameForObject(obj interface{}) string {
 	return sep[len(sep)-1]
 }
 
+// ObjectByTypeName returns a zero value of the struct with the given name.
+// E.g. if "Bridge" is given, this function returns midonet.Bridge{}.
 // Note: This implementation is evil. If it turned out to be a problem,
 // replace it with a map-based solution.
 func ObjectByTypeName(name string) interface{} {
