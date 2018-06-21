@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/midonet/midonet-kubernetes)](https://goreportcard.com/report/github.com/midonet/midonet-kubernetes)
+
 # MidoNet Kubernetes Integration
 
 ## Overview
