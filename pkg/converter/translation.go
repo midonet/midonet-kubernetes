@@ -132,7 +132,7 @@ func (u *TranslationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 	//   the first update adds a Translation and the second update
 	//   deletes it. when the controller processes the second update,
 	//   it's possible that its informer have not seen the Translation
-	//   addtion from the first update yet. in that case, it might
+	//   addition from the first update yet. in that case, it might
 	//   fail to delete the Translation.
 	selector := labels.NewSelector()
 	selector = selector.Add(*req)
@@ -219,7 +219,7 @@ func (u *TranslationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 		return "", err
 	}
 	// NOTE: CRs have AllowUnconditionalUpdate=false
-	// NOTE: CRs don't support stragetic merge patch
+	// NOTE: CRs don't support strategic merge patch
 	existingObj, err := u.client.MidonetV1().Translations(ns).Get(name, metav1.GetOptions{})
 	if err != nil {
 		clog.WithError(err).Error("Get")
@@ -275,7 +275,7 @@ func checkTranslationUpdate(old *mnv1.Translation, new *mnv1.Translation) {
 		"new": "new",
 	})
 	if len(old.Resources) > len(new.Resources) {
-		clog.Fatal("The list of resources shrinked")
+		clog.Fatal("The list of resources shrunk")
 	}
 }
 
