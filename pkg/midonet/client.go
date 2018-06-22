@@ -24,9 +24,54 @@ import (
 	"net/http"
 	"reflect"
 	"strings"
+	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
 	log "github.com/sirupsen/logrus"
 )
+
+const (
+	metricsNamespace = "midonet_kube_controllers"
+	metricsSubsystem = "midonet_client"
+)
+
+var (
+	apiLatency = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsSubsystem,
+			Name:      "request_duration_seconds",
+			Help:      "Latency of MidoNet API call",
+		},
+		[]string{"method", "resource", "code"},
+	)
+
+	callCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsSubsystem,
+			Name:      "requests_total",
+			Help:      "Number of MidoNet API calls",
+		},
+		[]string{"method", "resource", "code"},
+	)
+
+	errorCount = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: metricsNamespace,
+			Subsystem: metricsSubsystem,
+			Name:      "errors_total",
+			Help:      "Number of failed MidoNet API calls",
+		},
+		[]string{"method", "resource"},
+	)
+)
+
+func init() {
+	prometheus.MustRegister(apiLatency)
+	prometheus.MustRegister(callCount)
+	prometheus.MustRegister(errorCount)
+}
 
 // Client is a MidoNet API client.
 type Client struct {
@@ -243,13 +288,31 @@ func (c *Client) prepareRequest(method string, path string, res APIResource, res
 }
 
 func (c *Client) executeRequest(req *http.Request) (*http.Response, string, error) {
+	resType := req.Header.Get("Content-Type")
+	startTime := time.Now()
 	client := http.DefaultClient
 	resp, err := client.Do(req)
 	if err != nil {
+		errorCount.With(prometheus.Labels{
+			"method":   strings.ToLower(req.Method),
+			"resource": resType,
+		}).Inc()
 		return nil, "", err
 	}
 	defer resp.Body.Close()
 	respBody, _ := ioutil.ReadAll(resp.Body)
+	timeTaken := time.Since(startTime).Seconds()
+	// REVISIT: resource type for DELETE
+	if req.Method == "GET" {
+		resType = req.Header.Get("Accept")
+	}
+	metricsLabels := prometheus.Labels{
+		"method":   strings.ToLower(req.Method),
+		"resource": resType,
+		"code":     fmt.Sprintf("%d", resp.StatusCode),
+	}
+	apiLatency.With(metricsLabels).Observe(timeTaken)
+	callCount.With(metricsLabels).Inc()
 	clog := log.WithFields(log.Fields{
 		"statusCode":   resp.StatusCode,
 		"responseBody": string(respBody),
