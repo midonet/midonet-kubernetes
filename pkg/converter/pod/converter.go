@@ -44,6 +44,7 @@ func (c *podConverter) Convert(key converter.Key, obj interface{}, config *conve
 	baseID := idForKey(key.Key())
 	bridgePortID := baseID
 	spec := obj.(*v1.Pod).Spec
+	status := obj.(*v1.Pod).Status
 	nodeName := spec.NodeName
 	if nodeName == "" {
 		clog.Info("NodeName is not set")
@@ -51,6 +52,10 @@ func (c *podConverter) Convert(key converter.Key, obj interface{}, config *conve
 	}
 	if spec.HostNetwork {
 		clog.Debug("hostNetwork")
+		return nil, nil, nil
+	}
+	if status.Phase == v1.PodSucceeded || status.Phase == v1.PodFailed {
+		clog.Debug("Terminated pod")
 		return nil, nil, nil
 	}
 	bridgeID := converter.IDForKey("Node", nodeName)
