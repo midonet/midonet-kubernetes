@@ -124,5 +124,5 @@ func main() {
 	}
 
 	// Wait forever.
-	select {}
+	serveMetrics()
 }
