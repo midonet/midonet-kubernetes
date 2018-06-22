@@ -38,6 +38,10 @@ spec:
       containers:
         - name: midonet-kube-controllers
           image: midonet/midonet-kube-controllers:1.5
+          ports:
+            - containerPort: 9453
+              name: metrics
+              protocol: TCP
           env:
             - name: MIDONETKUBE_MIDONET_API
               valueFrom:
