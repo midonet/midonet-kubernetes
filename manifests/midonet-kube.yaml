@@ -45,6 +45,16 @@ spec:
             - containerPort: 9453
               name: metrics
               protocol: TCP
+          livenessProbe:
+            httpGet:
+              scheme: HTTP
+              port: 9453
+              path: /metrics
+            initialDelaySeconds: 60
+            failureThreshold: 6
+            successThreshold: 1
+            periodSeconds: 10
+            timeoutSeconds: 5
           env:
             - name: MIDONETKUBE_MIDONET_API
               valueFrom:
