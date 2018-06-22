@@ -99,7 +99,7 @@ rules:
       - get
       - list
       - watch
-      - update
+      - patch
   - apiGroups:
     - midonet.org
     resources:
@@ -110,6 +110,7 @@ rules:
       - watch
       - update
       - create
+      - patch
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
