@@ -30,6 +30,9 @@ spec:
       namespace: kube-system
       labels:
         k8s-app: midonet-kube-controllers
+      annotations:
+        prometheus.io/port: "9453"
+        prometheus.io/scrape: "true"
     spec:
       serviceAccountName: midonet-kube-controllers
       hostNetwork: true
