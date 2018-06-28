@@ -1,6 +1,5 @@
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
-description: MidoNet Translated Resources
 kind: CustomResourceDefinition
 metadata:
   name: translations.midonet.org
@@ -14,6 +13,9 @@ spec:
     singular: translation
     shortNames:
     - tr
+  validation:
+    openAPIV3Schema:
+      description: "Midonet Translated Resources"
 ---
 kind: Deployment
 apiVersion: extensions/v1beta1
