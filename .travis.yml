@@ -1,0 +1,17 @@
+sudo: false
+
+language: go
+
+go:
+- 1.10.x
+
+go_import_path: github.com/midonet/midonet-kubernetes
+
+before_install:
+- go get github.com/golang/dep/...
+
+install:
+- dep ensure
+
+script:
+- ./tools/check-all.sh
