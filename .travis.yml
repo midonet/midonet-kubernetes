@@ -1,4 +1,7 @@
-sudo: false
+sudo: required
+
+services:
+- docker
 
 language: go
 
@@ -15,3 +18,4 @@ install:
 
 script:
 - ./tools/check-all.sh
+- ./build.sh TEST
