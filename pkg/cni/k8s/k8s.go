@@ -26,8 +26,10 @@ import (
 	"github.com/containernetworking/plugins/pkg/ipam"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/utils"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/converter/node"
 	"github.com/midonet/midonet-kubernetes/pkg/converter/pod"
+	k8sutil "github.com/midonet/midonet-kubernetes/pkg/k8s"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -40,6 +42,7 @@ import (
 func CmdAddK8s(args *skel.CmdArgs, conf types.NetConf, epIDs utils.WEPIdentifiers) (*current.Result, error) {
 	var err error
 	var result *current.Result
+	var k8sClient *kubernetes.Clientset
 
 	utils.ConfigureLogging(conf.LogLevel)
 
@@ -60,6 +63,7 @@ func CmdAddK8s(args *skel.CmdArgs, conf types.NetConf, epIDs utils.WEPIdentifier
 			return nil, err
 		}
 		logger.WithField("client", client).Debug("Created Kubernetes client")
+		k8sClient = client
 
 		cidr, err := getPodCidr(client, conf, epIDs.Namespace, epIDs.Pod)
 		if err != nil {
@@ -164,10 +168,22 @@ retry_ipam:
 	// If we decided to wait, we can do it by watching the interface to
 	// see it to be connected to the "midonet" datapath.
 
-	// REVISIT(yamamoto): Feed midonet mac/ip info,
-	// probably by annotating the k8s Pod here and letting the controller
-	// update the backend.
-	// https://midonet.atlassian.net/browse/MNA-1232
+	// Try to annotate the Pod with MAC address info
+	// Note: The annotation is merely an optimization.
+	if k8sClient == nil {
+		client, err := newK8sClient(conf, logger)
+		if err == nil {
+			k8sClient = client
+		}
+	}
+	if k8sClient != nil {
+		err = k8sutil.AddPodAnnotation(k8sClient, epIDs.Namespace, epIDs.Pod, converter.MACAnnotation, mac.String())
+		if err != nil {
+			logger.WithError(err).WithField("mac", mac).Error("Failed to annotate Pod with MAC")
+		}
+	} else {
+		logger.WithField("mac", mac).Error("Skip annotating Pod with MAC as client is not available")
+	}
 
 	return result, nil
 }
