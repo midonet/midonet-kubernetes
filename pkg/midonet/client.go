@@ -110,6 +110,16 @@ func (c *Client) exists(origRes APIResource) (bool, error) {
 	return false, fmt.Errorf("Unexpected status %d", resp.StatusCode)
 }
 
+// Check if the resource needs a workaround for
+// https://midonet.atlassian.net/browse/MNA-1315
+func mna1315(res APIResource) bool {
+	switch res.(type) {
+	case *IPv4MACPair:
+		return true
+	}
+	return false
+}
+
 // Push creates or updates the given resources on MidoNet API.
 func (c *Client) Push(resources []APIResource) error {
 	for _, res := range resources {
@@ -135,7 +145,7 @@ func (c *Client) Push(resources []APIResource) error {
 			}).Info("Referent doesn't exist yet?")
 			return fmt.Errorf("Referent doesn't exist yet?")
 		}
-		if resp.StatusCode == 409 {
+		if resp.StatusCode == 409 || (resp.StatusCode == 500 && mna1315(res)) {
 			if res.Path("PUT") != "" {
 				resp, body, err = c.put(res)
 				if err != nil {
