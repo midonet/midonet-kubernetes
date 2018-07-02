@@ -114,6 +114,8 @@ func (c *Client) exists(origRes APIResource) (bool, error) {
 // https://midonet.atlassian.net/browse/MNA-1315
 func mna1315(res APIResource) bool {
 	switch res.(type) {
+	case *MACPort:
+		return true
 	case *IPv4MACPair:
 		return true
 	}
