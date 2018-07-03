@@ -123,6 +123,8 @@ retry:
 		}
 	}
 
+	serveRPC()
+
 	// We've done successfully.
 	// Loop forever to avoid being restarted by kubernetes.
 	// Note that DaemonSet manadates restartPolicy=Always.
