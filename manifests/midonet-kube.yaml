@@ -230,6 +230,8 @@ spec:
               name: cni-net-dir
             - mountPath: /host/opt/cni/bin
               name: cni-bin-dir
+            - mountPath: /var/run/midonet-kube-node
+              name: var-run
       volumes:
         - name: cni-bin-dir
           hostPath:
@@ -237,6 +239,9 @@ spec:
         - name: cni-net-dir
           hostPath:
             path: /etc/cni/net.d
+        - name: var-run
+          hostPath:
+            path: /var/run/midonet-kube-node
 ---
 apiVersion: v1
 kind: ServiceAccount
