@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77363e33_ae96c05a",
+        "filename": "manifests/midonet-kube.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-07-04T10:51:23Z",
+      "side": 1,
+      "message": "i think it ought to use PersistentVolume for storage.\nsee https://kubernetes.io/docs/tutorials/stateful-application/zookeeper/",
+      "revId": "20db1bf1855a599afcedd14537218d1502718306",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
