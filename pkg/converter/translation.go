@@ -125,6 +125,15 @@ func (u *translationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	return u.deleteTranslations(parentRef, requirement, uids)
 }
 
+func contains(xs []types.UID, y types.UID) bool {
+	for _, x := range xs {
+		if x == y {
+			return true
+		}
+	}
+	return false
+}
+
 func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
@@ -150,10 +159,8 @@ func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 	}
 	clog.WithField("objList", objList).Debug("Got Translations")
 	for _, tr := range objList.Items {
-		for _, keep := range keepUIDs {
-			if tr.ObjectMeta.UID == keep {
-				goto next
-			}
+		if contains(keepUIDs, tr.ObjectMeta.UID) {
+			continue
 		}
 		err = u.deleteTranslation(tr)
 		if err != nil {
@@ -167,7 +174,6 @@ func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 				"name":      tr.ObjectMeta.Name,
 			}).Info("Global Translation Deleted")
 		}
-	next:
 	}
 	return nil
 }
