@@ -49,6 +49,21 @@ func (s *server) AddPodAnnotation(ctx context.Context, in *api.AddPodAnnotationR
 	return &api.AddPodAnnotationReply{Error: errorMessage}, nil
 }
 
+func (s *server) DeletePodAnnotation(ctx context.Context, in *api.DeletePodAnnotationRequest) (*api.DeletePodAnnotationReply, error) {
+	logger := log.WithField("request", in)
+
+	logger.Info("Got a request")
+	err := k8s.DeletePodAnnotation(s.client, in.Namespace, in.Name, in.Key)
+	var errorMessage string
+	if err != nil {
+		logger.WithError(err).Error("Failed")
+		errorMessage = err.Error()
+	} else {
+		logger.Info("Succeed")
+	}
+	return &api.DeletePodAnnotationReply{Error: errorMessage}, nil
+}
+
 func serveRPC(clientset *kubernetes.Clientset) {
 	log.Info("Starting RPC server")
 	logger := log.WithField("path", api.Path)

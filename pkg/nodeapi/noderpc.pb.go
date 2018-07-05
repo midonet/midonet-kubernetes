@@ -37,7 +37,7 @@ func (m *AddPodAnnotationRequest) Reset()         { *m = AddPodAnnotationRequest
 func (m *AddPodAnnotationRequest) String() string { return proto.CompactTextString(m) }
 func (*AddPodAnnotationRequest) ProtoMessage()    {}
 func (*AddPodAnnotationRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_noderpc_e896e40e4d31448e, []int{0}
+	return fileDescriptor_noderpc_f7d6671c23ff3d05, []int{0}
 }
 func (m *AddPodAnnotationRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddPodAnnotationRequest.Unmarshal(m, b)
@@ -96,7 +96,7 @@ func (m *AddPodAnnotationReply) Reset()         { *m = AddPodAnnotationReply{} }
 func (m *AddPodAnnotationReply) String() string { return proto.CompactTextString(m) }
 func (*AddPodAnnotationReply) ProtoMessage()    {}
 func (*AddPodAnnotationReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_noderpc_e896e40e4d31448e, []int{1}
+	return fileDescriptor_noderpc_f7d6671c23ff3d05, []int{1}
 }
 func (m *AddPodAnnotationReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddPodAnnotationReply.Unmarshal(m, b)
@@ -123,9 +123,103 @@ func (m *AddPodAnnotationReply) GetError() string {
 	return ""
 }
 
+type DeletePodAnnotationRequest struct {
+	Namespace            string   `protobuf:"bytes,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Key                  string   `protobuf:"bytes,3,opt,name=key,proto3" json:"key,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeletePodAnnotationRequest) Reset()         { *m = DeletePodAnnotationRequest{} }
+func (m *DeletePodAnnotationRequest) String() string { return proto.CompactTextString(m) }
+func (*DeletePodAnnotationRequest) ProtoMessage()    {}
+func (*DeletePodAnnotationRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_noderpc_f7d6671c23ff3d05, []int{2}
+}
+func (m *DeletePodAnnotationRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeletePodAnnotationRequest.Unmarshal(m, b)
+}
+func (m *DeletePodAnnotationRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeletePodAnnotationRequest.Marshal(b, m, deterministic)
+}
+func (dst *DeletePodAnnotationRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeletePodAnnotationRequest.Merge(dst, src)
+}
+func (m *DeletePodAnnotationRequest) XXX_Size() int {
+	return xxx_messageInfo_DeletePodAnnotationRequest.Size(m)
+}
+func (m *DeletePodAnnotationRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeletePodAnnotationRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeletePodAnnotationRequest proto.InternalMessageInfo
+
+func (m *DeletePodAnnotationRequest) GetNamespace() string {
+	if m != nil {
+		return m.Namespace
+	}
+	return ""
+}
+
+func (m *DeletePodAnnotationRequest) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *DeletePodAnnotationRequest) GetKey() string {
+	if m != nil {
+		return m.Key
+	}
+	return ""
+}
+
+type DeletePodAnnotationReply struct {
+	Error                string   `protobuf:"bytes,1,opt,name=error,proto3" json:"error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *DeletePodAnnotationReply) Reset()         { *m = DeletePodAnnotationReply{} }
+func (m *DeletePodAnnotationReply) String() string { return proto.CompactTextString(m) }
+func (*DeletePodAnnotationReply) ProtoMessage()    {}
+func (*DeletePodAnnotationReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_noderpc_f7d6671c23ff3d05, []int{3}
+}
+func (m *DeletePodAnnotationReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_DeletePodAnnotationReply.Unmarshal(m, b)
+}
+func (m *DeletePodAnnotationReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_DeletePodAnnotationReply.Marshal(b, m, deterministic)
+}
+func (dst *DeletePodAnnotationReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DeletePodAnnotationReply.Merge(dst, src)
+}
+func (m *DeletePodAnnotationReply) XXX_Size() int {
+	return xxx_messageInfo_DeletePodAnnotationReply.Size(m)
+}
+func (m *DeletePodAnnotationReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_DeletePodAnnotationReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DeletePodAnnotationReply proto.InternalMessageInfo
+
+func (m *DeletePodAnnotationReply) GetError() string {
+	if m != nil {
+		return m.Error
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*AddPodAnnotationRequest)(nil), "nodeapi.AddPodAnnotationRequest")
 	proto.RegisterType((*AddPodAnnotationReply)(nil), "nodeapi.AddPodAnnotationReply")
+	proto.RegisterType((*DeletePodAnnotationRequest)(nil), "nodeapi.DeletePodAnnotationRequest")
+	proto.RegisterType((*DeletePodAnnotationReply)(nil), "nodeapi.DeletePodAnnotationReply")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -141,6 +235,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MidoNetKubeNodeClient interface {
 	AddPodAnnotation(ctx context.Context, in *AddPodAnnotationRequest, opts ...grpc.CallOption) (*AddPodAnnotationReply, error)
+	DeletePodAnnotation(ctx context.Context, in *DeletePodAnnotationRequest, opts ...grpc.CallOption) (*DeletePodAnnotationReply, error)
 }
 
 type midoNetKubeNodeClient struct {
@@ -160,9 +255,19 @@ func (c *midoNetKubeNodeClient) AddPodAnnotation(ctx context.Context, in *AddPod
 	return out, nil
 }
 
+func (c *midoNetKubeNodeClient) DeletePodAnnotation(ctx context.Context, in *DeletePodAnnotationRequest, opts ...grpc.CallOption) (*DeletePodAnnotationReply, error) {
+	out := new(DeletePodAnnotationReply)
+	err := c.cc.Invoke(ctx, "/nodeapi.MidoNetKubeNode/DeletePodAnnotation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MidoNetKubeNodeServer is the server API for MidoNetKubeNode service.
 type MidoNetKubeNodeServer interface {
 	AddPodAnnotation(context.Context, *AddPodAnnotationRequest) (*AddPodAnnotationReply, error)
+	DeletePodAnnotation(context.Context, *DeletePodAnnotationRequest) (*DeletePodAnnotationReply, error)
 }
 
 func RegisterMidoNetKubeNodeServer(s *grpc.Server, srv MidoNetKubeNodeServer) {
@@ -187,6 +292,24 @@ func _MidoNetKubeNode_AddPodAnnotation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MidoNetKubeNode_DeletePodAnnotation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePodAnnotationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MidoNetKubeNodeServer).DeletePodAnnotation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeapi.MidoNetKubeNode/DeletePodAnnotation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MidoNetKubeNodeServer).DeletePodAnnotation(ctx, req.(*DeletePodAnnotationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _MidoNetKubeNode_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "nodeapi.MidoNetKubeNode",
 	HandlerType: (*MidoNetKubeNodeServer)(nil),
@@ -195,26 +318,33 @@ var _MidoNetKubeNode_serviceDesc = grpc.ServiceDesc{
 			MethodName: "AddPodAnnotation",
 			Handler:    _MidoNetKubeNode_AddPodAnnotation_Handler,
 		},
+		{
+			MethodName: "DeletePodAnnotation",
+			Handler:    _MidoNetKubeNode_DeletePodAnnotation_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "noderpc.proto",
 }
 
-func init() { proto.RegisterFile("noderpc.proto", fileDescriptor_noderpc_e896e40e4d31448e) }
+func init() { proto.RegisterFile("noderpc.proto", fileDescriptor_noderpc_f7d6671c23ff3d05) }
 
-var fileDescriptor_noderpc_e896e40e4d31448e = []byte{
-	// 201 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcd, 0xcb, 0x4f, 0x49,
-	0x2d, 0x2a, 0x48, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x07, 0x71, 0x13, 0x0b, 0x32,
-	0x95, 0x8a, 0xb9, 0xc4, 0x1d, 0x53, 0x52, 0x02, 0xf2, 0x53, 0x1c, 0xf3, 0xf2, 0xf2, 0x4b, 0x12,
-	0x4b, 0x32, 0xf3, 0xf3, 0x82, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0x84, 0x64, 0xb8, 0x38, 0xf3,
-	0x12, 0x73, 0x53, 0x8b, 0x0b, 0x12, 0x93, 0x53, 0x25, 0x18, 0x15, 0x18, 0x35, 0x38, 0x83, 0x10,
-	0x02, 0x42, 0x42, 0x5c, 0x2c, 0x20, 0x8e, 0x04, 0x13, 0x58, 0x02, 0xcc, 0x16, 0x12, 0xe0, 0x62,
-	0xce, 0x4e, 0xad, 0x94, 0x60, 0x06, 0x0b, 0x81, 0x98, 0x42, 0x22, 0x5c, 0xac, 0x65, 0x89, 0x39,
-	0xa5, 0xa9, 0x12, 0x2c, 0x60, 0x31, 0x08, 0x47, 0x49, 0x97, 0x4b, 0x14, 0xd3, 0xd2, 0x82, 0x1c,
-	0xb0, 0xf2, 0xd4, 0xa2, 0xa2, 0xfc, 0x22, 0xa8, 0x75, 0x10, 0x8e, 0x51, 0x26, 0x17, 0xbf, 0x6f,
-	0x66, 0x4a, 0xbe, 0x5f, 0x6a, 0x89, 0x77, 0x69, 0x52, 0xaa, 0x5f, 0x7e, 0x4a, 0xaa, 0x50, 0x18,
-	0x97, 0x00, 0xba, 0x09, 0x42, 0x0a, 0x7a, 0x50, 0x4f, 0xe9, 0xe1, 0xf0, 0x91, 0x94, 0x1c, 0x1e,
-	0x15, 0x05, 0x39, 0x95, 0x4a, 0x0c, 0x49, 0x6c, 0xe0, 0xe0, 0x31, 0x06, 0x04, 0x00, 0x00, 0xff,
-	0xff, 0xf7, 0x68, 0x21, 0x67, 0x2f, 0x01, 0x00, 0x00,
+var fileDescriptor_noderpc_f7d6671c23ff3d05 = []byte{
+	// 243 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x52, 0xc1, 0x4a, 0xc4, 0x30,
+	0x14, 0xb4, 0xee, 0xaa, 0xec, 0x03, 0x71, 0x79, 0x2a, 0x86, 0x22, 0xb2, 0xc6, 0x8b, 0x17, 0x8b,
+	0xe8, 0x17, 0x2c, 0x78, 0x13, 0x17, 0xd9, 0x83, 0x57, 0xcd, 0x36, 0xef, 0x50, 0x8c, 0x79, 0x31,
+	0x4d, 0x85, 0xfe, 0xa2, 0x5f, 0x25, 0x4d, 0x8b, 0x82, 0xb6, 0xbd, 0x79, 0x9b, 0x99, 0x4c, 0x98,
+	0xc9, 0x10, 0xd8, 0xb7, 0xac, 0xc9, 0xbb, 0x3c, 0x73, 0x9e, 0x03, 0xe3, 0x5e, 0x43, 0x95, 0x2b,
+	0x64, 0x09, 0x27, 0x4b, 0xad, 0x1f, 0x59, 0x2f, 0xad, 0xe5, 0xa0, 0x42, 0xc1, 0x76, 0x4d, 0xef,
+	0x15, 0x95, 0x01, 0x4f, 0x61, 0x66, 0xd5, 0x1b, 0x95, 0x4e, 0xe5, 0x24, 0x92, 0x45, 0x72, 0x39,
+	0x5b, 0xff, 0x08, 0x88, 0x30, 0x6d, 0x88, 0xd8, 0x8e, 0x07, 0x11, 0xe3, 0x1c, 0x26, 0xaf, 0x54,
+	0x8b, 0x49, 0x94, 0x1a, 0x88, 0x47, 0xb0, 0xf3, 0xa1, 0x4c, 0x45, 0x62, 0x1a, 0xb5, 0x96, 0xc8,
+	0x2b, 0x38, 0xfe, 0x1b, 0xea, 0x4c, 0xb4, 0x93, 0xf7, 0xec, 0xbb, 0xb8, 0x96, 0xc8, 0x17, 0x48,
+	0xef, 0xc8, 0x50, 0xa0, 0xff, 0xaa, 0x29, 0xaf, 0x41, 0xf4, 0x26, 0x0c, 0x76, 0xba, 0xf9, 0x4c,
+	0xe0, 0xe0, 0xa1, 0xd0, 0xbc, 0xa2, 0x70, 0x5f, 0x6d, 0x68, 0xc5, 0x9a, 0xf0, 0x09, 0xe6, 0xbf,
+	0x9f, 0x85, 0x8b, 0xac, 0x5b, 0x3a, 0x1b, 0x98, 0x39, 0x3d, 0x1b, 0x71, 0x38, 0x53, 0xcb, 0x2d,
+	0x7c, 0x86, 0xc3, 0x9e, 0x76, 0x78, 0xf1, 0x7d, 0x71, 0x78, 0x9d, 0xf4, 0x7c, 0xdc, 0x14, 0x03,
+	0x36, 0xbb, 0xf1, 0x53, 0xdc, 0x7e, 0x05, 0x00, 0x00, 0xff, 0xff, 0x80, 0x6c, 0x35, 0xa9, 0x25,
+	0x02, 0x00, 0x00,
 }
