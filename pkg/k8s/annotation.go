@@ -60,6 +60,25 @@ func AddPodAnnotation(client *kubernetes.Clientset, namespace, name, key, value 
 	return err
 }
 
+func DeletePodAnnotation(client *kubernetes.Clientset, namespace, name, key string) error {
+	old, err := client.CoreV1().Pods(namespace).Get(name, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	new := old.DeepCopy()
+	delete(new.ObjectMeta.Annotations, key)
+	if len(new.ObjectMeta.Annotations) == 0 {
+		new.ObjectMeta.Annotations = nil
+	}
+	patchBytes, err := makeStrategicMergePatch(old, new, v1.Pod{})
+	if err != nil {
+		return err
+	}
+	_, err = client.CoreV1().Pods(namespace).Patch(name, types.StrategicMergePatchType, patchBytes)
+	// REVISIT: maybe worth a retry in case of version mismatch?
+	return err
+}
+
 func AddNodeAnnotation(client *kubernetes.Clientset, name, key, value string) error {
 	old, err := client.CoreV1().Nodes().Get(name, metav1.GetOptions{})
 	if err != nil {
