@@ -27,15 +27,22 @@ import (
 	"github.com/midonet/midonet-kubernetes/pkg/nodeapi"
 )
 
-func AddPodAnnotation(namespace, name, key, value string) error {
+func newClient() (nodeapi.MidoNetKubeNodeClient, error) {
 	unixDialer := func(a string, t time.Duration) (net.Conn, error) {
 		return net.Dial("unix", a)
 	}
 	conn, err := grpc.Dial(nodeapi.Path, grpc.WithInsecure(), grpc.WithDialer(unixDialer))
 	if err != nil {
+		return nil, err
+	}
+	return nodeapi.NewMidoNetKubeNodeClient(conn), nil
+}
+
+func AddPodAnnotation(namespace, name, key, value string) error {
+	client, err := newClient()
+	if err != nil {
 		return err
 	}
-	client := nodeapi.NewMidoNetKubeNodeClient(conn)
 	req := &nodeapi.AddPodAnnotationRequest{
 		Namespace: namespace,
 		Name:      name,
