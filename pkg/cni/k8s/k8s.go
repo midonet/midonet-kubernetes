@@ -180,12 +180,17 @@ retry_ipam:
 // The following logic only applies to kubernetes since it sends multiple DELs for the same
 // endpoint. See: https://github.com/kubernetes/kubernetes/issues/44100
 func CmdDelK8s(epIDs utils.WEPIdentifiers, args *skel.CmdArgs, conf types.NetConf, logger *logrus.Entry) error {
+	err := nodecli.DeletePodAnnotation(epIDs.Namespace, epIDs.Pod, converter.MACAnnotation)
+	if err != nil {
+		logger.WithError(err).Error("Failed to delete MAC annotation")
+		return err
+	}
 
 	// Release the IP address by calling the configured IPAM plugin.
 	ipamErr := utils.CleanUpIPAM(conf, args, logger)
 
 	// Clean up namespace by removing the interfaces.
-	err := utils.CleanUpNamespace(args, logger)
+	err = utils.CleanUpNamespace(args, logger)
 	if err != nil {
 		return err
 	}
