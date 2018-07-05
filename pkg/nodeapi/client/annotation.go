@@ -58,3 +58,23 @@ func AddPodAnnotation(namespace, name, key, value string) error {
 	}
 	return nil
 }
+
+func DeletePodAnnotation(namespace, name, key string) error {
+	client, err := newClient()
+	if err != nil {
+		return err
+	}
+	req := &nodeapi.DeletePodAnnotationRequest{
+		Namespace: namespace,
+		Name:      name,
+		Key:       key,
+	}
+	reply, err := client.DeletePodAnnotation(context.Background(), req)
+	if err != nil {
+		return err
+	}
+	if reply.Error != "" {
+		return errors.New(reply.Error)
+	}
+	return nil
+}
