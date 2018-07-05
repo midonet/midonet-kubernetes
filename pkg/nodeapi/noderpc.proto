@@ -19,6 +19,7 @@ package nodeapi;
 
 service MidoNetKubeNode {
 	rpc AddPodAnnotation (AddPodAnnotationRequest) returns (AddPodAnnotationReply) {}
+	rpc DeletePodAnnotation (DeletePodAnnotationRequest) returns (DeletePodAnnotationReply) {}
 }
 
 message AddPodAnnotationRequest {
@@ -29,5 +30,15 @@ message AddPodAnnotationRequest {
 }
 
 message AddPodAnnotationReply {
+	string error = 1;
+}
+
+message DeletePodAnnotationRequest {
+	string namespace = 1;
+	string name = 2;
+	string key = 3;
+}
+
+message DeletePodAnnotationReply {
 	string error = 1;
 }
