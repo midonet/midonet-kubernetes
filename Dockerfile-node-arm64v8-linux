@@ -1,0 +1,19 @@
+ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
+
+FROM golang:1.10.3 as builder
+ARG BUILD_WORKDIR
+LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
+WORKDIR ${BUILD_WORKDIR}
+COPY . .
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-node ./cmd/midonet-kube-node
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers
+
+FROM arm64v8/alpine:3.8
+LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
+ARG BUILD_WORKDIR
+WORKDIR /root/
+COPY node-scripts .
+COPY --from=builder ${BUILD_WORKDIR}/dist/arm64-linux/midonet-kube-node .
+COPY --from=builder ${BUILD_WORKDIR}/dist/arm64-linux/midonet-kube-cni .
+CMD ["./main"]
