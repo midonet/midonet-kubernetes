@@ -95,8 +95,9 @@ func (c *podConverter) Convert(key converter.Key, obj interface{}, config *conve
 			return nil, nil, err
 		}
 		skey := converter.Key{
-			Kind: "Pod-MAC",
-			Name: fmt.Sprintf("%s/mac/%s", key.Name, DNSifyMAC(mac)),
+			Kind:        "Pod-MAC",
+			Name:        fmt.Sprintf("%s/mac/%s", key.Name, DNSifyMAC(mac)),
+			Unversioned: true,
 		}
 		subs[skey] = &PortMAC{
 			BridgeID: bridgeID,
@@ -106,8 +107,9 @@ func (c *podConverter) Convert(key converter.Key, obj interface{}, config *conve
 		ip := net.ParseIP(status.PodIP)
 		if ip != nil {
 			skey := converter.Key{
-				Kind: "Pod-ARP",
-				Name: fmt.Sprintf("%s/ip/%s/%s", key.Name, ip, DNSifyMAC(mac)),
+				Kind:        "Pod-ARP",
+				Name:        fmt.Sprintf("%s/ip/%s/%s", key.Name, ip, DNSifyMAC(mac)),
+				Unversioned: true,
 			}
 			subs[skey] = &PortARP{
 				BridgeID: bridgeID,

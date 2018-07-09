@@ -135,8 +135,9 @@ func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *conv
 			return nil, nil, err
 		}
 		skey := converter.Key{
-			Kind: "Node-MAC",
-			Name: fmt.Sprintf("%s/mac/%s", key.Name, pod.DNSifyMAC(mac)),
+			Kind:        "Node-MAC",
+			Name:        fmt.Sprintf("%s/mac/%s", key.Name, pod.DNSifyMAC(mac)),
+			Unversioned: true,
 		}
 		subs[skey] = &pod.PortMAC{
 			BridgeID: bridgeID,
@@ -144,8 +145,9 @@ func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *conv
 			MAC:      mac,
 		}
 		skey = converter.Key{
-			Kind: "Node-ARP",
-			Name: fmt.Sprintf("%s/ip/%s/%s", key.Name, nodeIP, pod.DNSifyMAC(mac)),
+			Kind:        "Node-ARP",
+			Name:        fmt.Sprintf("%s/ip/%s/%s", key.Name, nodeIP, pod.DNSifyMAC(mac)),
+			Unversioned: true,
 		}
 		subs[skey] = &pod.PortARP{
 			BridgeID: bridgeID,
