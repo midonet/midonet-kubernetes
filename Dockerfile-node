@@ -9,7 +9,7 @@ RUN CGO_ENABLED=0 go build -ldflags '-s -w' -o midonet-kube-node ./cmd/midonet-k
 RUN CGO_ENABLED=0 go build -ldflags '-s -w' -o midonet-kube-cni ./cmd/midonet-kube-cni
 RUN CGO_ENABLED=0 go build -ldflags '-s -w' -o midonet-kube-controllers ./cmd/midonet-kube-controllers
 
-FROM alpine:3.7
+FROM alpine:3.8
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 ARG BUILD_WORKDIR
 WORKDIR /root/
