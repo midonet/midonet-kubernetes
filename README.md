@@ -51,6 +51,17 @@ Kubernetes networking functionalitites.
 
 See the output of the above build.sh script.
 
+### Create docker manifest lists
+
+<pre>
+	% TAG=1.1
+	% ./createmanifest.sh ${TAG}
+</pre>
+
+### Upload docker manifest lists
+
+See the output of the above createmanifest.sh script.
+
 ## How to deploy
 
 The following procedure assumes [kubeadm][kubeadm] based deployment.
@@ -273,6 +284,8 @@ Right now, our releases are tags on master branch.
 
 2. Build and push the docker images. (See the above sections about docker images)
 
-3. Submit a patch to update docker image tags in our kubernetes manifests.
+3. Build and push the manifest list.
 
-4. Review and merge the patch.
+4. Submit a patch to update docker image tags in our kubernetes manifests.
+
+6. Review and merge the patch.
