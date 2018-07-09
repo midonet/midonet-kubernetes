@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4561a66_6a0622d3",
+        "filename": "build.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-07-09T11:18:26Z",
+      "side": 1,
+      "message": "Not a big problem, but I think the tagging can be done in the same command as the build.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 79
+      },
+      "revId": "1756876a672da45845a7056696bbe6351b807d63",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
