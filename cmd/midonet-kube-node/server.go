@@ -35,7 +35,10 @@ type server struct {
 }
 
 func (s *server) AddPodAnnotation(ctx context.Context, in *api.AddPodAnnotationRequest) (*api.AddPodAnnotationReply, error) {
-	logger := log.WithField("request", in)
+	logger := log.WithFields(log.Fields{
+		"request": "AddPodAnnotation",
+		"args": in,
+	})
 
 	logger.Info("Got a request")
 	err := k8s.AddPodAnnotation(s.client, in.Namespace, in.Name, in.Key, in.Value)
@@ -50,7 +53,10 @@ func (s *server) AddPodAnnotation(ctx context.Context, in *api.AddPodAnnotationR
 }
 
 func (s *server) DeletePodAnnotation(ctx context.Context, in *api.DeletePodAnnotationRequest) (*api.DeletePodAnnotationReply, error) {
-	logger := log.WithField("request", in)
+	logger := log.WithFields(log.Fields{
+		"request": "DeletePodAnnotation",
+		"args": in,
+	})
 
 	logger.Info("Got a request")
 	err := k8s.DeletePodAnnotation(s.client, in.Namespace, in.Name, in.Key)
