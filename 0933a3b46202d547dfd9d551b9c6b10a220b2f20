@@ -45,6 +45,30 @@
       "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b32980b6_481c714c",
+        "filename": "Dockerfile-arm64v8-linux",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-07-09T07:52:43Z",
+      "side": 1,
+      "message": "as far as i know, this is correct GOARCH.\nhttps://github.com/golang/go/wiki/GoArm#supported-architectures\n\nfor some reasons docker folks call it differently. (arm64v8)\nso i followed the convention.",
+      "parentUuid": "bd1d0c47_4f7e933b",
+      "range": {
+        "startLine": 8,
+        "startChar": 25,
+        "endLine": 8,
+        "endChar": 30
+      },
+      "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
