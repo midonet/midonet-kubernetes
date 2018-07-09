@@ -24,9 +24,10 @@ import (
 
 // Key is an identifier of a Translation.
 type Key struct {
-	Kind      string
-	Namespace string
-	Name      string
+	Kind        string
+	Namespace   string
+	Name        string
+	Unversioned bool
 }
 
 func newKeyFromClientKey(kind, strKey string) (Key, error) {
@@ -50,5 +51,10 @@ func (k *Key) Key() string {
 }
 
 func (k *Key) translationName() string {
+	if k.Unversioned {
+		// Note: When Unversioned flag was introduced, TranslationVersion
+		// happened to be 3.
+		return fmt.Sprintf("%s.3.%s", strings.ToLower(k.Kind), k.Name)
+	}
 	return fmt.Sprintf("%s.%s.%s", strings.ToLower(k.Kind), TranslationVersion, k.Name)
 }
