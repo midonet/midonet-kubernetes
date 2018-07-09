@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d5ec7cb_89aba991",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-07-09T07:43:15Z",
+      "side": 1,
+      "message": "arm64v8 :)",
+      "range": {
+        "startLine": 7,
+        "startChar": 24,
+        "endLine": 7,
+        "endChar": 29
+      },
+      "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd1d0c47_4f7e933b",
+        "filename": "Dockerfile-arm64v8-linux",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-07-09T07:43:15Z",
+      "side": 1,
+      "message": "typo/leftover or is this intentional until ARM machine is able to compile them?",
+      "range": {
+        "startLine": 8,
+        "startChar": 25,
+        "endLine": 8,
+        "endChar": 30
+      },
+      "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
