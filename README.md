@@ -43,19 +43,13 @@ Kubernetes networking functionalitites.
 
 <pre>
 	% dep ensure
-	% docker build -f Dockerfile -t midonet/midonet-kube-controllers .
-	% docker build -f Dockerfile-node -t midonet/midonet-kube-node .
+	% TAG=1.1
+	% ./build.sh ${TAG}
 </pre>
 
 ### Upload docker images
 
-<pre>
-	% TAG=1.1
-	% docker tag midonet/midonet-kube-controllers midonet/midonet-kube-controllers:${TAG}
-	% docker tag midonet/midonet-kube-node midonet/midonet-kube-node:${TAG}
-	% docker push midonet/midonet-kube-controllers:${TAG}
-	% docker push midonet/midonet-kube-node:${TAG}
-</pre>
+See the output of the above build.sh script.
 
 ## How to deploy
 
