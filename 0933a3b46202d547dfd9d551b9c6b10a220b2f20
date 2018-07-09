@@ -69,6 +69,30 @@
       "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4315b3ca_57cfca21",
+        "filename": "Dockerfile-arm64v8-linux",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-07-09T08:28:05Z",
+      "side": 1,
+      "message": "sorry, I must have been read it wrongly (I thought I read \u0027amd64\u0027) (maybe today\u0027s coffee was decaffeinated ;)",
+      "parentUuid": "b32980b6_481c714c",
+      "range": {
+        "startLine": 8,
+        "startChar": 25,
+        "endLine": 8,
+        "endChar": 30
+      },
+      "revId": "0933a3b46202d547dfd9d551b9c6b10a220b2f20",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
