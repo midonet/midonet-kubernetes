@@ -27,6 +27,13 @@ type Key struct {
 	Kind      string
 	Namespace string
 	Name      string
+
+	// Unversioned=true makes this Key and its associated Translation
+	// unversioned.  That is, keys and IDs are not changed when
+	// TranslationVersion is bumped.  It's necessary for resources
+	// which doesn't have IDs in the first place.
+	// REVISIT: Probably Key is not the appropriate place to put this info.
+	Unversioned bool
 }
 
 func newKeyFromClientKey(kind, strKey string) (Key, error) {
@@ -50,5 +57,10 @@ func (k *Key) Key() string {
 }
 
 func (k *Key) translationName() string {
+	if k.Unversioned {
+		// Note: When Unversioned flag was introduced, TranslationVersion
+		// happened to be 3.
+		return fmt.Sprintf("%s.3.%s", strings.ToLower(k.Kind), k.Name)
+	}
 	return fmt.Sprintf("%s.%s.%s", strings.ToLower(k.Kind), TranslationVersion, k.Name)
 }

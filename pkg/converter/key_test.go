@@ -84,3 +84,17 @@ func TestTranslationName(t *testing.T) {
 		t.Errorf("got %v\nwant %v", actual, expected)
 	}
 }
+
+func TestUnversionedTranslationName(t *testing.T) {
+	k := Key{
+		Kind:        "Hoge-Fuga",
+		Namespace:   "foo",
+		Name:        "bar",
+		Unversioned: true,
+	}
+	actual := k.translationName()
+	expected := "hoge-fuga.3.bar"
+	if actual != expected {
+		t.Errorf("got %v\nwant %v", actual, expected)
+	}
+}
