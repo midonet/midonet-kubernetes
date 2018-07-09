@@ -1,6 +1,6 @@
 ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
 
-FROM golang:1.10.1 as builder
+FROM golang:1.10.3 as builder
 ARG BUILD_WORKDIR
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 WORKDIR ${BUILD_WORKDIR}
