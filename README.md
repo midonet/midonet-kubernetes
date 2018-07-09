@@ -58,6 +58,13 @@ See the output of the above build.sh script.
 	% ./createmanifest.sh ${TAG}
 </pre>
 
+Note: This uses ["docker manifest"][docker-manifest] command,
+which is experimental.
+You might need to enable the experimental feature on your docker
+environment. And/or you might need to upgrade your docker.
+
+[docker-manifest]: https://docs.docker.com/edge/engine/reference/commandline/manifest/
+
 ### Upload docker manifest lists
 
 See the output of the above createmanifest.sh script.
