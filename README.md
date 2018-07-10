@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/midonet/midonet-kubernetes.svg?branch=master)](https://travis-ci.org/midonet/midonet-kubernetes)
+[![Coverage Status](https://coveralls.io/repos/github/midonet/midonet-kubernetes/badge.svg?branch=master)](https://coveralls.io/github/midonet/midonet-kubernetes?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/midonet/midonet-kubernetes)](https://goreportcard.com/report/github.com/midonet/midonet-kubernetes)
 [![GoDoc](https://godoc.org/github.com/midonet/midonet-kubernetes?status.svg)](https://godoc.org/github.com/midonet/midonet-kubernetes)
 
