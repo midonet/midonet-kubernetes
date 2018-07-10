@@ -26,8 +26,10 @@ import (
 	"github.com/containernetworking/plugins/pkg/ipam"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/types"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/utils"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/converter/node"
 	"github.com/midonet/midonet-kubernetes/pkg/converter/pod"
+	nodecli "github.com/midonet/midonet-kubernetes/pkg/nodeapi/client"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -152,7 +154,7 @@ retry_ipam:
 	// REVISIT(yamamoto): We've just set up a veth pair. The rest of
 	// the plumbing will be done by the controller and the backend
 	// asynchronously.  That is, the controller will create necessary
-	// MidoNet objects including HostPortInterface and the MidoNet agent
+	// MidoNet objects including HostInterfacePort and the MidoNet agent
 	// on this node will notice it and actually connect the interface to
 	// its datapath.
 	// It might be better for us to ensure those asynchronous plumbing is
@@ -164,10 +166,12 @@ retry_ipam:
 	// If we decided to wait, we can do it by watching the interface to
 	// see it to be connected to the "midonet" datapath.
 
-	// REVISIT(yamamoto): Feed midonet mac/ip info,
-	// probably by annotating the k8s Pod here and letting the controller
-	// update the backend.
-	// https://midonet.atlassian.net/browse/MNA-1232
+	// Try to annotate the Pod with MAC address info
+	// Note: The annotation is merely an optimization.
+	err = nodecli.AddPodAnnotation(epIDs.Namespace, epIDs.Pod, converter.MACAnnotation, mac.String())
+	if err != nil {
+		logger.WithError(err).WithField("mac", mac).Error("Failed to annotate Pod with MAC")
+	}
 
 	return result, nil
 }
@@ -176,12 +180,17 @@ retry_ipam:
 // The following logic only applies to kubernetes since it sends multiple DELs for the same
 // endpoint. See: https://github.com/kubernetes/kubernetes/issues/44100
 func CmdDelK8s(epIDs utils.WEPIdentifiers, args *skel.CmdArgs, conf types.NetConf, logger *logrus.Entry) error {
+	err := nodecli.DeletePodAnnotation(epIDs.Namespace, epIDs.Pod, converter.MACAnnotation)
+	if err != nil {
+		logger.WithError(err).Error("Failed to delete MAC annotation")
+		return err
+	}
 
 	// Release the IP address by calling the configured IPAM plugin.
 	ipamErr := utils.CleanUpIPAM(conf, args, logger)
 
 	// Clean up namespace by removing the interfaces.
-	err := utils.CleanUpNamespace(args, logger)
+	err = utils.CleanUpNamespace(args, logger)
 	if err != nil {
 		return err
 	}

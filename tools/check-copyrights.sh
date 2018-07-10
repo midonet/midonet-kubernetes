@@ -5,8 +5,9 @@ files=$(find . -path ./vendor -prune -o -name "*.go" -type f | grep -v vendor)
 nocopyright=""
 for f in $files
 do
-	# For each file, check if it contains "Copyright" in the first four line.
-	exists=$(head -n 4 $f | grep "Copyright")
+	# For each file, check if it contains "Copyright" or "generated"
+	# in the first four line.
+	exists=$(head -n 4 $f | grep -E "(Copyright|generated)")
 	if [ -z "$exists" ]; then 
 		nocopyright="$nocopyright\n$f"
 	fi 

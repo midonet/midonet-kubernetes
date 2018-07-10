@@ -25,6 +25,7 @@ import (
 	"k8s.io/api/core/v1"
 
 	"github.com/midonet/midonet-kubernetes/pkg/converter"
+	"github.com/midonet/midonet-kubernetes/pkg/converter/pod"
 	"github.com/midonet/midonet-kubernetes/pkg/midonet"
 )
 
@@ -125,6 +126,33 @@ func (c *nodeConverter) Convert(key converter.Key, obj interface{}, config *conv
 				tunnelEndpointIP: tunnelEndpointIP,
 				hostID:           hostID,
 			}
+		}
+	}
+	macStr, exists := meta.Annotations[converter.MACAnnotation]
+	if exists {
+		mac, err := net.ParseMAC(macStr)
+		if err != nil {
+			return nil, nil, err
+		}
+		skey := converter.Key{
+			Kind:        "Node-MAC",
+			Name:        fmt.Sprintf("%s/mac/%s", key.Name, pod.DNSifyMAC(mac)),
+			Unversioned: true,
+		}
+		subs[skey] = &pod.PortMAC{
+			BridgeID: bridgeID,
+			PortID:   nodePortID,
+			MAC:      mac,
+		}
+		skey = converter.Key{
+			Kind:        "Node-ARP",
+			Name:        fmt.Sprintf("%s/ip/%s/%s", key.Name, nodeIP, pod.DNSifyMAC(mac)),
+			Unversioned: true,
+		}
+		subs[skey] = &pod.PortARP{
+			BridgeID: bridgeID,
+			IP:       nodeIP,
+			MAC:      mac,
 		}
 	}
 	return []converter.BackendResource{

@@ -63,6 +63,9 @@ func newHandler(kc *kubernetes.Clientset, recorder record.EventRecorder, config 
 func (h *annotatorHandler) Update(key string, gvk schema.GroupVersionKind, obj interface{}) error {
 	n := obj.(*v1.Node)
 	new := n.DeepCopy()
+	if new.ObjectMeta.Annotations == nil {
+		new.ObjectMeta.Annotations = make(map[string]string)
+	}
 	annotations := new.ObjectMeta.Annotations
 	clog := log.WithFields(log.Fields{
 		"node": key,

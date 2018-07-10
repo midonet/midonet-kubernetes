@@ -43,19 +43,31 @@ Kubernetes networking functionalitites.
 
 <pre>
 	% dep ensure
-	% docker build -f Dockerfile -t midonet/midonet-kube-controllers .
-	% docker build -f Dockerfile-node -t midonet/midonet-kube-node .
+	% TAG=1.1
+	% ./build.sh ${TAG}
 </pre>
 
 ### Upload docker images
 
+See the output of the above build.sh script.
+
+### Create docker manifest lists
+
 <pre>
 	% TAG=1.1
-	% docker tag midonet/midonet-kube-controllers midonet/midonet-kube-controllers:${TAG}
-	% docker tag midonet/midonet-kube-node midonet/midonet-kube-node:${TAG}
-	% docker push midonet/midonet-kube-controllers:${TAG}
-	% docker push midonet/midonet-kube-node:${TAG}
+	% ./createmanifest.sh ${TAG}
 </pre>
+
+Note: This uses ["docker manifest"][docker-manifest] command,
+which is experimental.
+You might need to enable the experimental feature on your docker
+environment. And/or you might need to upgrade your docker.
+
+[docker-manifest]: https://docs.docker.com/edge/engine/reference/commandline/manifest/
+
+### Upload docker manifest lists
+
+See the output of the above createmanifest.sh script.
 
 ## How to deploy
 
@@ -279,6 +291,8 @@ Right now, our releases are tags on master branch.
 
 2. Build and push the docker images. (See the above sections about docker images)
 
-3. Submit a patch to update docker image tags in our kubernetes manifests.
+3. Build and push the manifest list.
 
-4. Review and merge the patch.
+4. Submit a patch to update docker image tags in our kubernetes manifests.
+
+6. Review and merge the patch.

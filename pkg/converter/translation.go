@@ -125,6 +125,15 @@ func (u *translationUpdater) Update(parentKind schema.GroupVersionKind, parentOb
 	return u.deleteTranslations(parentRef, requirement, uids)
 }
 
+func contains(xs []types.UID, y types.UID) bool {
+	for _, x := range xs {
+		if x == y {
+			return true
+		}
+	}
+	return false
+}
+
 func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, req *labels.Requirement, keepUIDs []types.UID) error {
 	// Get a list of Translations owned by the parentUID synchronously.
 	// REVISIT: Maybe it's more efficient to use the cache in the informer
@@ -135,6 +144,12 @@ func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 	//   it's possible that its informer have not seen the Translation
 	//   addition from the first update yet. in that case, it might
 	//   fail to delete the Translation.
+	clog := log.WithFields(log.Fields{
+		"parentRef": parentRef,
+		"req":       req,
+		"keepUIDs":  keepUIDs,
+	})
+	clog.Debug("Deleting stale translations")
 	selector := labels.NewSelector()
 	selector = selector.Add(*req)
 	opts := metav1.ListOptions{LabelSelector: selector.String()}
@@ -142,25 +157,23 @@ func (u *translationUpdater) deleteTranslations(parentRef *v1.ObjectReference, r
 	if err != nil {
 		return err
 	}
+	clog.WithField("objList", objList).Debug("Got Translations")
 	for _, tr := range objList.Items {
-		for _, keep := range keepUIDs {
-			if tr.ObjectMeta.UID == keep {
-				goto next
-			}
+		if contains(keepUIDs, tr.ObjectMeta.UID) {
+			continue
 		}
 		err = u.deleteTranslation(tr)
 		if err != nil {
 			return err
 		}
 		if parentRef != nil {
-			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationDeleted", "Translation %s/%s Deleted", tr.ObjectMeta.Namespace, tr.ObjectMeta.Name)
+			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationDeleted", "Translation %s/%s UID %s Deleted", tr.ObjectMeta.Namespace, tr.ObjectMeta.Name, tr.ObjectMeta.UID)
 		} else {
 			log.WithFields(log.Fields{
 				"namespace": tr.ObjectMeta.Namespace,
 				"name":      tr.ObjectMeta.Name,
 			}).Info("Global Translation Deleted")
 		}
-	next:
 	}
 	return nil
 }
@@ -206,7 +219,7 @@ func (u *translationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 	newObj, err := u.client.MidonetV1().Translations(ns).Create(obj)
 	if err == nil {
 		if parentRef != nil {
-			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationCreated", "Translation %s/%s Created", ns, name)
+			u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationCreated", "Translation %s/%s UID %s Created", ns, name, newObj.ObjectMeta.UID)
 		} else {
 			log.WithFields(log.Fields{
 				"namespace": ns,
@@ -240,18 +253,18 @@ func (u *translationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 	if err != nil {
 		return "", err
 	}
-	clog = clog.WithField("patch", string(patchBytes))
-	newObj, err = u.client.MidonetV1().Translations(ns).Patch(name, types.MergePatchType, patchBytes)
-	if err != nil {
-		clog.WithError(err).Error("Patch")
-		return "", err
-	}
 	if jsonpatch.Equal(patchBytes, []byte(`{}`)) {
 		log.WithFields(log.Fields{
 			"namespace": ns,
 			"name":      name,
 		}).Debug("Skipping no-op update of Translation")
 		return existingObj.ObjectMeta.UID, nil
+	}
+	clog = clog.WithField("patch", string(patchBytes))
+	newObj, err = u.client.MidonetV1().Translations(ns).Patch(name, types.MergePatchType, patchBytes)
+	if err != nil {
+		clog.WithError(err).Error("Patch")
+		return "", err
 	}
 	checkTranslationUpdate(existingObj, desiredObj)
 	log.WithFields(log.Fields{
@@ -260,7 +273,7 @@ func (u *translationUpdater) updateOne(parentRef *v1.ObjectReference, ns, name s
 		"patch":     string(patchBytes),
 	}).Debug("Patched Translation")
 	if parentRef != nil {
-		u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationUpdated", "Translation %s/%s Updated", ns, name)
+		u.recorder.Eventf(parentRef, v1.EventTypeNormal, "TranslationUpdated", "Translation %s/%s UID %s Updated", ns, name, newObj.ObjectMeta.UID)
 	} else {
 		log.WithFields(log.Fields{
 			"namespace": ns,

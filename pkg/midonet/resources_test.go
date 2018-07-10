@@ -130,3 +130,31 @@ func TestHosts(t *testing.T) {
 		t.Errorf("got %v\nwant %v", actual, expected)
 	}
 }
+
+func TestMACPortPair(t *testing.T) {
+	mac, _ := net.ParseMAC("01:23:45:67:89:ab")
+	portID, _ := uuid.Parse("dbb7065f-ab57-433c-92b6-84816a9e87be")
+	res := &MACPort{
+		MACAddr: HardwareAddr(mac),
+		PortID:  &portID,
+	}
+	actual := res.macPortPair()
+	expected := "01-23-45-67-89-ab_dbb7065f-ab57-433c-92b6-84816a9e87be"
+	if actual != expected {
+		t.Errorf("got %v\nwant %v", actual, expected)
+	}
+}
+
+func TestIP4MACPair(t *testing.T) {
+	ip := net.ParseIP("192.168.1.1")
+	mac, _ := net.ParseMAC("01:23:45:67:89:ab")
+	res := &IPv4MACPair{
+		IP:  ip,
+		MAC: HardwareAddr(mac),
+	}
+	actual := res.ip4MACPair()
+	expected := "192.168.1.1_01-23-45-67-89-ab"
+	if actual != expected {
+		t.Errorf("got %v\nwant %v", actual, expected)
+	}
+}

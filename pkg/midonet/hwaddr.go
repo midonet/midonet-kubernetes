@@ -43,3 +43,7 @@ func (hw *HardwareAddr) UnmarshalJSON(bytes []byte) error {
 	*hw = HardwareAddr(mac)
 	return nil
 }
+
+func (hw HardwareAddr) String() string {
+	return net.HardwareAddr(hw).String()
+}

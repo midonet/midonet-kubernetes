@@ -26,6 +26,7 @@ import (
 
 	k8scni "github.com/midonet/midonet-kubernetes/pkg/cni/k8s"
 	"github.com/midonet/midonet-kubernetes/pkg/cni/utils"
+	"github.com/midonet/midonet-kubernetes/pkg/converter"
 	"github.com/midonet/midonet-kubernetes/pkg/converter/node"
 	"github.com/midonet/midonet-kubernetes/pkg/k8s"
 )
@@ -109,7 +110,15 @@ retry:
 	if err != nil {
 		logger.WithError(err).Fatal("DoNetworking")
 	}
-	logger.WithField("contVethMAC", contVethMAC).Info("Success")
+	logger = logger.WithField("mac", contVethMAC)
+	logger.Info("Success")
+
+	err = k8s.AddNodeAnnotation(k8sClientset, nodeName, converter.MACAnnotation, contVethMAC)
+	if err != nil {
+		logger.WithError(err).Warn("Node annotation failed")
+	} else {
+		logger.Info("Node annotation succeeded")
+	}
 
 	cniConfigPath := config.CNIConfigPath
 	if cniConfigPath != "" {
@@ -122,6 +131,8 @@ retry:
 			logger.WithError(err).Fatal("generateCNIConfig")
 		}
 	}
+
+	serveRPC(k8sClientset)
 
 	// We've done successfully.
 	// Loop forever to avoid being restarted by kubernetes.

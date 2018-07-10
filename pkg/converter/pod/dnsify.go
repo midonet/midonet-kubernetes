@@ -13,20 +13,13 @@
 //    License for the specific language governing permissions and limitations
 //    under the License.
 
-package converter
+package pod
 
-const (
-	// HostIDAnnotation annotates MidoNet Host ID for the Node.
-	HostIDAnnotation = "midonet.org/host-id"
-
-	// TunnelZoneIDAnnotation annotates MidoNet Tunnel Zone ID for the Node.
-	// An empty string means the auto-created default tunnel zone.
-	TunnelZoneIDAnnotation = "midonet.org/tunnel-zone-id"
-
-	// TunnelEndpointIPAnnotation annotates MidoNet Tunnel Endpoint IP for
-	// the Node.
-	TunnelEndpointIPAnnotation = "midonet.org/tunnel-endpoint-ip"
-
-	// MACAnnotation annotates MAC address for the Pod/Node.
-	MACAnnotation = "midonet.org/mac-address"
+import (
+	"encoding/hex"
+	"net"
 )
+
+func DNSifyMAC(mac net.HardwareAddr) string {
+	return hex.EncodeToString(mac)
+}

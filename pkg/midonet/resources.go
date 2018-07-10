@@ -18,6 +18,7 @@ package midonet
 import (
 	"fmt"
 	"net"
+	"strings"
 
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/google/uuid"
@@ -366,6 +367,68 @@ func (res *HostInterfacePort) Path(op string) string {
 		return fmt.Sprintf("/hosts/%s/ports", res.Parent.ID)
 	case "DELETE", "GET":
 		return fmt.Sprintf("/hosts/%s/ports/%s", res.Parent.ID, res.PortID)
+	default:
+		return ""
+	}
+}
+
+// MACPort implements https://docs.midonet.org/docs/v5.4/en/rest-api/content/mac-port.html
+type MACPort struct {
+	midonetResource
+	Parent
+	MACAddr HardwareAddr `json:"macAddr,omitempty"`
+	PortID  *uuid.UUID   `json:"portId,omitempty"`
+}
+
+func (*MACPort) MediaType() string {
+	return "application/vnd.org.midonet.MACPort-v2+json"
+}
+
+// {macAddress}_{portId} where macAddress = macAddr.replace(':', '-')
+// See getMacPortTemplate in:
+//  midonet-cluster/src/main/java/org/midonet/client/resource/Bridge.java
+//  midonet-cluster/src/main/java/org/midonet/cluster/rest_api/models/Bridge.java
+func (res *MACPort) macPortPair() string {
+	urlMACAddr := strings.Replace(res.MACAddr.String(), ":", "-", -1)
+	return fmt.Sprintf("%s_%s", urlMACAddr, res.PortID)
+}
+
+func (res *MACPort) Path(op string) string {
+	switch op {
+	case "POST":
+		return fmt.Sprintf("/bridges/%s/mac_table", res.Parent.ID)
+	case "DELETE", "GET":
+		return fmt.Sprintf("/bridges/%s/mac_table/%s", res.Parent.ID, res.macPortPair())
+	default:
+		return ""
+	}
+}
+
+// IPv4MACPair implements https://docs.midonet.org/docs/latest/rest-api/content/ip4macpair.html
+type IPv4MACPair struct {
+	midonetResource
+	Parent
+	IP  net.IP       `json:"ip"`
+	MAC HardwareAddr `json:"mac"`
+}
+
+func (*IPv4MACPair) MediaType() string {
+	return "application/vnd.org.midonet.IP4Mac-v1+json"
+}
+
+// See parseIpMac in
+//  midonet-cluster/src/main/scala/org/midonet/cluster/services/rest_api/resources/BridgeArpTableResource.scala
+func (res *IPv4MACPair) ip4MACPair() string {
+	urlMACAddr := strings.Replace(res.MAC.String(), ":", "-", -1)
+	return fmt.Sprintf("%s_%s", res.IP.String(), urlMACAddr)
+}
+
+func (res *IPv4MACPair) Path(op string) string {
+	switch op {
+	case "POST":
+		return fmt.Sprintf("/bridges/%s/arp_table", res.Parent.ID)
+	case "DELETE", "GET":
+		return fmt.Sprintf("/bridges/%s/arp_table/%s", res.Parent.ID, res.ip4MACPair())
 	default:
 		return ""
 	}

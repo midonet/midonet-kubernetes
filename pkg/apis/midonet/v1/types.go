@@ -42,7 +42,7 @@ type TranslationList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 
-	Items []Translation
+	Items []Translation `json:"items"`
 }
 
 // BackendResource describes a MidoNet API resource.
