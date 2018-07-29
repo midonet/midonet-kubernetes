@@ -4,7 +4,10 @@ FROM golang:1.10.3 as builder
 ARG BUILD_WORKDIR
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 WORKDIR ${BUILD_WORKDIR}
+# NOTE: dep install.sh doesn't support aarch64
+RUN if [ $(uname -m) = "aarch64" ]; then go get -u github.com/golang/dep/cmd/dep; else DEP_RELEASE_TAG=v0.5.0 curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh; fi
 COPY . .
+RUN dep ensure -v
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-node ./cmd/midonet-kube-node
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers
