@@ -18,8 +18,8 @@ install:
 - dep ensure
 
 script:
-- ./tools/check-all.sh
 - ./build.sh TEST
+- ./tools/check-all.sh
 
 after_success:
 - $GOPATH/bin/goveralls -coverprofile=profile.cov -service=travis-ci
