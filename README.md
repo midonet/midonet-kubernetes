@@ -44,14 +44,10 @@ This software is tested with:
 ### Prequisite
 
 - docker
-- [dep][dep]
-
-[dep]: https://github.com/golang/dep
 
 ### Build docker images
 
 <pre>
-	% dep ensure
 	% TAG=1.1
 	% ./build.sh ${TAG}
 </pre>
