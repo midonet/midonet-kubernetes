@@ -25,11 +25,11 @@ import (
 )
 
 type endpointsConverter struct {
-	svcInformer cache.SharedIndexInformer
+	svcGetter cache.KeyGetter
 }
 
 func newEndpointsConverter(svcInformer cache.SharedIndexInformer) converter.Converter {
-	return &endpointsConverter{svcInformer}
+	return &endpointsConverter{svcInformer.GetIndexer()}
 }
 
 func endpoints(key string, svcIP string, subsets []v1.EndpointSubset) map[string][]endpoint {
@@ -57,7 +57,7 @@ func endpoints(key string, svcIP string, subsets []v1.EndpointSubset) map[string
 func (c *endpointsConverter) Convert(key converter.Key, obj interface{}, config *converter.Config) ([]converter.BackendResource, converter.SubResourceMap, error) {
 	resources := make([]converter.BackendResource, 0)
 	subs := make(converter.SubResourceMap)
-	svcObj, exists, err := c.svcInformer.GetIndexer().GetByKey(key.Key())
+	svcObj, exists, err := c.svcGetter.GetByKey(key.Key())
 	if err != nil {
 		return nil, nil, err
 	}
