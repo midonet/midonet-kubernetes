@@ -23,6 +23,7 @@ import (
 
 	"github.com/containernetworking/cni/pkg/types"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBridgeEmpty(t *testing.T) {
@@ -156,5 +157,63 @@ func TestIP4MACPair(t *testing.T) {
 	expected := "192.168.1.1_01-23-45-67-89-ab"
 	if actual != expected {
 		t.Errorf("got %v\nwant %v", actual, expected)
+	}
+}
+
+func TestAPIResources(t *testing.T) {
+	objs := []APIResource{
+		&TunnelZone{},
+		&TunnelZoneHost{},
+		&Router{},
+		&Bridge{},
+		&Port{Type: "Router"},
+		&Port{Type: "Bridge"},
+		&PortLink{},
+		&Route{},
+		&Chain{},
+		&Rule{},
+		&HostInterfacePort{},
+		&MACPort{},
+		&IPv4MACPair{},
+	}
+	methods := []string{
+		"GET",
+		"POST",
+		"PUT",
+		"DELETE",
+		"LIST",
+	}
+	for _, obj := range objs {
+		typ := obj.MediaType()
+		assert.Regexp(t, "^application/vnd\\.org\\.midonet\\..+\\+json$", typ)
+		assert.NotRegexp(t, "^application/vnd\\.org\\.midonet\\.collection\\..+\\+json$", typ)
+		allEmpty := true
+		for _, method := range methods {
+			path := obj.Path(method)
+			assert.Regexp(t, "^(/[[:alpha:]_]+(/.+|)|)$", path)
+			if path != "" {
+				allEmpty = false
+			}
+		}
+		assert.False(t, allEmpty)
+		hasParent, ok := obj.(HasParent)
+		if ok {
+			pid, _ := uuid.Parse("2bdd2d6a-95ff-11e8-bcfa-0015170bebef")
+			hasParent.SetParent(&pid)
+			assert.Equal(t, hasParent.GetParent(), &pid)
+			assert.Contains(t, obj.Path("POST"), pid.String())
+		}
+	}
+}
+
+func TestListableResources(t *testing.T) {
+	objs := []ListableResource{
+		&Host{},
+	}
+	for _, obj := range objs {
+		typ := obj.CollectionMediaType()
+		assert.Regexp(t, "^application/vnd\\.org\\.midonet\\.collection\\..+\\+json$", typ)
+		path := obj.Path("LIST")
+		assert.Regexp(t, "^/[[:alpha:]_]+$", path)
 	}
 }
