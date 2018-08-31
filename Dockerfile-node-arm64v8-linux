@@ -1,17 +1,22 @@
 ARG BUILD_WORKDIR=/go/src/github.com/midonet/midonet-kubernetes
 
-FROM golang:1.11.0 as builder
+FROM golang:1.11.0 as builder-deps
 ARG BUILD_WORKDIR
-LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 WORKDIR ${BUILD_WORKDIR}
-COPY . .
+COPY Gopkg.toml ./Gopkg.toml
+COPY Gopkg.lock ./Gopkg.lock
 ENV GO111MODULE=on
 RUN go mod init
+RUN go mod download
+RUN go get github.com/tebeka/go2xunit
+
+FROM builder-deps as builder
+COPY cmd ./cmd
+COPY pkg ./pkg
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-node ./cmd/midonet-kube-node
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
 RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers
 RUN CGO_ENABLED=0 GOARCG=arm64 GOOS=linux go test -v `find . -name "*_test.go" | xargs dirname | sort -u | xargs` | tee go_test.output
-RUN go get github.com/tebeka/go2xunit
 RUN go2xunit -input go_test.output -output /tmp/junit.xml
 
 FROM builder as test_fail_checker
