@@ -10,6 +10,12 @@ RUN go mod init
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-node ./cmd/midonet-kube-node
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers
+RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go test -v ./... | tee go_test.output
+RUN go get github.com/tebeka/go2xunit
+RUN go2xunit -input go_test.output -output /tmp/junit.xml
+
+FROM builder as test_fail_checker
+RUN go2xunit -fail -input go_test.output
 
 FROM scratch
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
