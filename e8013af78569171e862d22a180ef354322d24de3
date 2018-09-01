@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d1d971d_bab08bc8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-01T14:04:50Z",
+      "side": 1,
+      "message": "these dockerfiles are intended to be used for cross-build.\ni don\u0027t know how \"go test\" behaves in cross build case but i guess it doesn\u0027t work.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 42
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b693191e_8138fe37",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-01T14:04:50Z",
+      "side": 1,
+      "message": "H",
+      "range": {
+        "startLine": 13,
+        "startChar": 23,
+        "endLine": 13,
+        "endChar": 24
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38794e70_bc25e193",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-01T14:04:50Z",
+      "side": 1,
+      "message": "\"go test -v ./...\" isn\u0027t enough?",
+      "range": {
+        "startLine": 13,
+        "startChar": 42,
+        "endLine": 13,
+        "endChar": 113
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "369e35f1_6d975cea",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-01T14:04:50Z",
+      "side": 1,
+      "message": "it\u0027s better to run this earlier so that the result can be cached by docker",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
