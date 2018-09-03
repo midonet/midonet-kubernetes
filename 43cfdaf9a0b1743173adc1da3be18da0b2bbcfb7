@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c61862b5_e98b215b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-03T11:03:36Z",
+      "side": 1,
+      "message": "in my env it failed with \"exec format error\".\ni guess the error is hidden by the shell pipe operator.",
+      "range": {
+        "startLine": 16,
+        "startChar": 41,
+        "endLine": 18,
+        "endChar": 38
+      },
+      "revId": "43cfdaf9a0b1743173adc1da3be18da0b2bbcfb7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03685997_8656667c",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-03T11:03:36Z",
+      "side": 1,
+      "message": "cross build doesn\u0027t make sense for unit tests. i suspect it\u0027s cleaner to have a separate dockerfile for it.",
+      "range": {
+        "startLine": 13,
+        "startChar": 18,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "43cfdaf9a0b1743173adc1da3be18da0b2bbcfb7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5939cef3_5280d265",
+        "filename": "build.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002897
+      },
+      "writtenOn": "2018-09-03T11:03:36Z",
+      "side": 1,
+      "message": "space vs tab inconsistency",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 8
+      },
+      "revId": "43cfdaf9a0b1743173adc1da3be18da0b2bbcfb7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
