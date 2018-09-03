@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f9d5e305_c075e93f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-03T10:14:44Z",
+      "side": 1,
+      "message": "Yes, you are right. It is not a problem in our CI, as we execute the docker build in separate AMD/ARM machines but it could be for a person trying to build the ARM images in AMD for example. Fortunately, the tests are not able to start, so they generate neither success nor failure, so they are just skipped. So the build.sh script should work regardless, but the unit tests are only checked if is executed in a machine with one of the two provided architectures. So I think will change the CI to use ./build.sh running from the Intel/AMD slave, which is more powerful instead of the ARM one.",
+      "parentUuid": "0d1d971d_bab08bc8",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 42
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b693191e_8138fe37",
         "filename": "Dockerfile-amd64-linux",
         "patchSetId": 1
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "e62f7fd6_37133a98",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-03T10:14:44Z",
+      "side": 1,
+      "message": "Thanks, nice catch :)",
+      "parentUuid": "b693191e_8138fe37",
+      "range": {
+        "startLine": 13,
+        "startChar": 23,
+        "endLine": 13,
+        "endChar": 24
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79fb68d3_d56809d6",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-03T10:14:44Z",
+      "side": 1,
+      "message": "Thanks, I did not know that, but is nicer. I will change it.",
+      "parentUuid": "38794e70_bc25e193",
+      "range": {
+        "startLine": 13,
+        "startChar": 42,
+        "endLine": 13,
+        "endChar": 113
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "369e35f1_6d975cea",
         "filename": "Dockerfile-amd64-linux",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2018-09-01T14:04:50Z",
       "side": 1,
       "message": "it\u0027s better to run this earlier so that the result can be cached by docker",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "507f22c5_9525a49b",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-03T10:14:44Z",
+      "side": 1,
+      "message": "Done in next change.",
+      "parentUuid": "369e35f1_6d975cea",
       "range": {
         "startLine": 14,
         "startChar": 0,
