@@ -22,6 +22,30 @@
       "revId": "e8013af78569171e862d22a180ef354322d24de3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e06d052b_6a5c0e28",
+        "filename": "Dockerfile-amd64-linux",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-03T17:16:24Z",
+      "side": 0,
+      "message": "ok, restored",
+      "parentUuid": "24a8ccda_a38b1e01",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 1
+      },
+      "revId": "e8013af78569171e862d22a180ef354322d24de3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
     }
   ]
 }
