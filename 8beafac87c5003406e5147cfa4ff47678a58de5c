@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e1ea216_b73c532f",
+        "filename": "doc/custom-resource.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-12T10:53:11Z",
+      "side": 1,
+      "message": "not related: typo",
+      "range": {
+        "startLine": 9,
+        "startChar": 53,
+        "endLine": 9,
+        "endChar": 54
+      },
+      "revId": "8beafac87c5003406e5147cfa4ff47678a58de5c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c3da76b_bfccba63",
+        "filename": "doc/custom-resource.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-12T10:53:11Z",
+      "side": 1,
+      "message": "\"some of its Translations\" or \"some Translations\"",
+      "range": {
+        "startLine": 47,
+        "startChar": 28,
+        "endLine": 47,
+        "endChar": 48
+      },
+      "revId": "8beafac87c5003406e5147cfa4ff47678a58de5c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "469bf798_228503f7",
+        "filename": "doc/custom-resource.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1006717
+      },
+      "writtenOn": "2018-09-12T10:53:11Z",
+      "side": 1,
+      "message": "I guess this is only for the case the translations are not deleted by cascade deletion or it refer to translations in owned by another Kubernetes object. I think it would be good a little more detail here.",
+      "range": {
+        "startLine": 48,
+        "startChar": 22,
+        "endLine": 48,
+        "endChar": 47
+      },
+      "revId": "8beafac87c5003406e5147cfa4ff47678a58de5c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": true
+    }
+  ]
+}
