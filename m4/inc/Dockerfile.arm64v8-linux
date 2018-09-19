@@ -1,0 +1,4 @@
+include(Dockerfile.pre-build)
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-node ./cmd/midonet-kube-node
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
+RUN CGO_ENABLED=0 GOARCH=arm64 GOOS=linux go build -ldflags '-s -w' -o dist/arm64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers

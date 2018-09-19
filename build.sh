@@ -5,6 +5,8 @@ set -e
 TAG=$1
 DOCKERACC=$2
 
+./generate-dockerfiles.sh check
+
 if [ -z "${TAG}" ]; then
 	TAG="$(git rev-parse --short HEAD)"
 	if [ -z "${TAG}" ]; then

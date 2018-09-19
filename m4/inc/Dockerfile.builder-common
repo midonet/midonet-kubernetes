@@ -1,0 +1,4 @@
+FROM builder-deps as builder
+LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
+COPY cmd ./cmd
+COPY pkg ./pkg

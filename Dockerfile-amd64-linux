@@ -15,6 +15,8 @@ FROM builder-deps as builder
 LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
 COPY cmd ./cmd
 COPY pkg ./pkg
+
+
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-node ./cmd/midonet-kube-node
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-cni ./cmd/midonet-kube-cni
 RUN CGO_ENABLED=0 GOARCH=amd64 GOOS=linux go build -ldflags '-s -w' -o dist/amd64-linux/midonet-kube-controllers ./cmd/midonet-kube-controllers

@@ -10,15 +10,3 @@ ENV GO111MODULE=on
 RUN go mod init
 RUN go mod download
 RUN go get github.com/tebeka/go2xunit
-
-FROM builder-deps as builder
-LABEL maintainer "YAMAMOTO Takashi <yamamoto@midokura.com>"
-COPY cmd ./cmd
-COPY pkg ./pkg
-
-
-RUN go test -v ./... | tee go_test.output
-RUN go2xunit -input go_test.output -output /tmp/junit.xml
-
-FROM builder as test_fail_checker
-RUN go2xunit -input go_test.output -fail
