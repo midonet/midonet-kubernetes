@@ -71,6 +71,14 @@ func main() {
 	converterCfg := converter.NewConfigFromEnvConfig(config)
 	midonetCfg := midonet.NewConfigFromEnvConfig(config)
 
+	// Setup logging:
+	//
+	// recorder -- queue --> dispatcher -+-- queue -- rate limit --> k8s api
+	//                                   |
+	//                                   +-- queue ----> log.Info
+	//
+	// Note: queues lengths and rate limit parameters are hardcoded in
+	// client-go.
 	mnscheme.AddToScheme(scheme.Scheme)
 	broadcaster := record.NewBroadcaster()
 	recorder := broadcaster.NewRecorder(scheme.Scheme, v1.EventSource{Component: "midonet-kube-controllers"})
